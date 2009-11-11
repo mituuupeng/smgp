@@ -7,18 +7,19 @@
 
 = API使用简介 =
 
-1、类说明
-1.1Client类：
-类命名空间：cn.com.zjtelecom.smgp
-public Client(String Host, int port, int LoginMode, String clientid,
+1、类说明<br/>
+1.1Client类：<br/>
+类命名空间：cn.com.zjtelecom.smgp<br/>
+public Client(String Host, int port, int LoginMode, String clientid,<br/>
 			String ClientPasswd, String SPID) 
-说明：初始化smgp类
-Host:短信网关ip地址
-Port:短信网关端口
-LoginMode：登录模式，0：单发 1：单收 2：收发，如果有一个类已经启动为单收或者收发，另外一个类使用单收或者收发，只有第一个类才能收到Deliver消息
-ClientId：网关帐号
-ClientPasswd：网关密码
-SPID：ISMP上的企业代码，长度8位
+<br/>
+说明：初始化smgp类<br/>
+Host:短信网关ip地址<br/>
+Port:短信网关端口<br/>
+LoginMode：登录模式，0：单发 1：单收 2：收发，如果有一个类已经启动为单收或者收发，另外一个类使用单收或者收发，只有第一个类才能收到Deliver消息<br/>
+ClientId：网关帐号<br/>
+ClientPasswd：网关密码<br/>
+SPID：ISMP上的企业代码，长度8位<br/>
 
 public Client(String Host, int port, int LoginMode, String clientid,
 			String ClientPasswd, String SPID, int DisplayMode)
