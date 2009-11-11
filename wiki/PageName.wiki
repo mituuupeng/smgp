@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#关于本项目说明.
 
 = SMGP API 说明 =
 
