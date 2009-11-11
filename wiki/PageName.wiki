@@ -1,0 +1,177 @@
+#summary One-sentence summary of this page.
+
+= SMGP API 说明 =
+
+   SMGP协议是中国电信为短信增值业务指定的接口协议，协议在在SMPP协议基础上进行扩展，扩展了相关计费和鉴权信息。目前SMGP协议有1.0，2.0，3.0三个版本的协议。1.0协议目前基本上停用，而2.0目前在部分省小灵通接入仍然在使用。3.0协议时目前最新的协议，相比2.0协议主要增加了tlv可选字段。
+
+
+= 相关类说明 =
+
+1、类说明
+1.1Client类：
+类命名空间：cn.com.zjtelecom.smgp
+public Client(String Host, int port, int LoginMode, String clientid,
+			String ClientPasswd, String SPID) 
+说明：初始化smgp类
+Host:短信网关ip地址
+Port:短信网关端口
+LoginMode：登录模式，0：单发 1：单收 2：收发，如果有一个类已经启动为单收或者收发，另外一个类使用单收或者收发，只有第一个类才能收到Deliver消息
+ClientId：网关帐号
+ClientPasswd：网关密码
+SPID：ISMP上的企业代码，长度8位
+
+public Client(String Host, int port, int LoginMode, String clientid,
+			String ClientPasswd, String SPID, int DisplayMode)
+说明：初始化smgp类
+Host:短信网关ip地址
+Port:短信网关端口
+LoginMode：登录模式，0：单发 1：单收 2：收发，如果有一个类已经启动为单收或者收发，另外一个类使用单收或者收发，只有第一个类才能收到Deliver消息
+ClientId：网关帐号
+ClientPasswd：网关密码
+SPID：ISMP上的企业代码，长度8位
+DisplayMode：0不显示信息，1显示必要信息，2显示除ActiveTest以外的封包信息，3显示所有的封包信息
+
+public void setDisplayMode(int DisplayMode)
+说明：设置显示模式
+DisplayMode：0不显示信息，1显示必要信息，2显示除ActiveTest以外的封包信息，3显示所有的封包信息
+
+public Result Login() 
+说明：查询登录结果
+如返回 Result.ErrorCode非0表示登录失败 
+
+public Deliver OnDeliver()
+说明：查询上行消息
+该方法为阻塞方式调用，直到有上行消息才会返回。
+
+public Deliver getDeliver()
+说明：查询上行消息
+该方法为非阻塞方式调用，如当时无上行消息会返回空值。
+
+public Result Send(Submit submit) 
+说明：发送消息
+
+1.2 Submit类：
+public Submit()
+说明：初始化一个类
+类会使用初始化值创建submit类
+缺省值如下
+MsgType = 6;
+NeedReport = 0;
+Priority = 0;
+ServiceID = "";
+Feetype = "00";
+FeeCode = "000";
+FixedFee = "000";
+MsgFormat = 15;
+ValidTime = "";
+AtTime = "";
+SrcTermid = "";
+DestTermid = "";
+ChargeTermid = "";
+MsgLength = 0;
+MsgContent = null
+Reserve = null
+ProductID = ""
+LinkID = ""
+OtherTlvArray = null
+Submit本身为一个java bean,可以通过set变量名，或者get变量名的方法，设置和获取
+
+public Submit(int msgtype, int needreport, int priority, String serviceid, String feetype, String feecode, String fixedfee, int msgformat, String validtime, String attime, String srctermid, String desttermid, String chargetermid, int msglength, byte[] msgcontent, byte[] reserve, String productid, String Linkid)
+说明：初始化一个类，并设置值
+Msgtype：消息类型，MT消息统一设为6
+Needreport:是否需要状态报告
+Priority：消息优先级
+Serviceid：服务代码，在浙江的电信的ismp平台，该代码无效
+Feetype：计费类型，免费设00,按次设01，包月是02，封顶03
+Feecode：按次费用
+Fixedfee：包月费用，如果Feetype为03
+Msgformat：消息编码，0为ASCII,15为GBK编码，8位UCS-2编码
+Validtime：消息有效时间
+Attime：定时发送时间
+Srctermid：源地址号码
+Desttermid：目的号码
+Chargetermid：计费号码
+Msglength：消息长度
+Msgcontent：消息内容
+Reserve：保留字段
+Productid：产品编号
+Linkid：点播下发时需要将deliver消息里面的linkid作为消息的Linkid下发
+
+public Submit(String srctermid, String desttermid, byte[] msgconent)
+说明：初始化一个类，并设置值，未设置的值为初始值
+Srctermid：源地址号码
+Desttermid：目的号码，计费号码会使用Desttermid替换
+Msgconent：消息体，格式为byte数组
+
+
+public Submit(String srctermid, String desttermid, String msgconent)
+说明：初始化一个类，并设置值，未设置的值为初始值
+Srctermid：源地址号码
+Desttermid：目的号码，计费号码会使用Desttermid替换
+Msgconent：消息体，格式为字符串
+
+public Submit(String srctermid, String desttermid, String msgconent,
+			String productid)
+说明：初始化一个类，并设置值，未设置的值为初始值
+Srctermid：源地址号码
+Desttermid：目的号码，计费号码会使用Desttermid替换
+Msgconent：消息体，格式为字符串
+Productid：产品编号
+
+public Submit(String srctermid, String desttermid, String msgconent,
+			String productid)
+说明：初始化一个类，并设置值，未设置的值为初始值
+Srctermid：源地址号码
+Desttermid：目的号码，计费号码会使用Desttermid替换
+Msgconent：消息体，格式为字符串
+Productid：产品编号
+
+public Submit(String srctermid, String desttermid, byte[] msgconent,
+			String productid)
+说明：初始化一个类，并设置值，未设置的值为初始值
+Srctermid：源地址号码
+Desttermid：目的号码，计费号码会使用Desttermid替换
+Msgconent：消息体，格式为byte数组
+Productid：产品编号
+
+public void AddTlv(int tag, String value)
+说明:tlv字段，srcMsg是企业代码，在初始化client时候统一设置无需这里单独设置，另外Productid和linkid可以直接设置，也无需使用该方法设置
+Tag:tlv tag标记
+Value：值
+
+2 api使用
+2.1发送消息：
+Client client = new Client("61.130.246.114", 8890, 0, "与网关连接帐号",
+				"与网关连接密码", "ISMP上的企业代码");
+Submit submit = new Submit("10620068", "18967441118", "Test中文",
+				"112000000000061090527");
+Result result=client.Send(submit);
+
+2.2接收消息：
+2.2.1非等待方式：
+Client client = new Client("61.130.246.114", 8890, 1, "与网关连接帐号",
+				"与网关连接密码", "ISMP上的企业代码");
+Deliver dl=client.getDeliver();
+if (dl!=null){		 System.out.println("---------------Deliver---------------");
+			System.out.println("SrcTermID:" + dl.SrcTermID);
+			System.out.println("DestTermID:" + dl.DestTermID);
+			System.out.println("MsgContent:"
+					+ new String(dl.MsgContent));
+			System.out.println("LinkID:" + dl.LinkID);
+			System.out.println("-------------------------------------");
+		}else {
+			System.out.println("no deliver");
+		}
+
+2.2.2等待方式：
+Client client = new Client("61.130.246.114", 8890, 1, "与网关连接帐号",
+				"与网关连接密码", "ISMP上的企业代码");	
+Deliver dl = client.OnDeliver();
+System.out.println("---------------Deliver---------------");
+					System.out.println("SrcTermID:" + dl.SrcTermID);
+					System.out.println("DestTermID:" + dl.DestTermID);
+					System.out.println("MsgContent:"
+							+ new String(dl.MsgContent));
+					System.out.println("LinkID:" + dl.LinkID);
+		
+System.out.println("-------------------------------------");
