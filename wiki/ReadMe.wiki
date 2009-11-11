@@ -21,128 +21,129 @@ ClientId：网关帐号<br/>
 ClientPasswd：网关密码<br/>
 SPID：ISMP上的企业代码，长度8位<br/>
 
-public Client(String Host, int port, int LoginMode, String clientid,
-			String ClientPasswd, String SPID, int DisplayMode)
-说明：初始化smgp类
-Host:短信网关ip地址
-Port:短信网关端口
-LoginMode：登录模式，0：单发 1：单收 2：收发，如果有一个类已经启动为单收或者收发，另外一个类使用单收或者收发，只有第一个类才能收到Deliver消息
-ClientId：网关帐号
-ClientPasswd：网关密码
-SPID：ISMP上的企业代码，长度8位
-DisplayMode：0不显示信息，1显示必要信息，2显示除ActiveTest以外的封包信息，3显示所有的封包信息
+public Client(String Host, int port, int LoginMode, String clientid,<br/>
+			String ClientPasswd, String SPID, int DisplayMode)<br/>
+说明：初始化smgp类<br/>
+Host:短信网关ip地址<br/>
+Port:短信网关端口<br/>
+LoginMode：登录模式，0：单发 1：单收 2：收发，如果有一个类已经启动为单收或者收发，另外一个类使用单收或者收发，只有第一个类才能收到Deliver消息<br/>
+ClientId：网关帐号<br/>
+ClientPasswd：网关密码<br/>
+SPID：ISMP上的企业代码，长度8位<br/>
+DisplayMode：0不显示信息，1显示必要信息，2显示除ActiveTest以外的封包信息，3显示所有的封包信息<br/>
 
-public void setDisplayMode(int DisplayMode)
-说明：设置显示模式
-DisplayMode：0不显示信息，1显示必要信息，2显示除ActiveTest以外的封包信息，3显示所有的封包信息
+public void setDisplayMode(int DisplayMode)<br/>
+说明：设置显示模式<br/>
+DisplayMode：0不显示信息，1显示必要信息，2显示除ActiveTest以外的封包信息，3显示所有的封包信息<br/>
 
-public Result Login() 
-说明：查询登录结果
-如返回 Result.ErrorCode非0表示登录失败 
+public Result Login() <br/>
+说明：查询登录结果<br/>
+如返回 Result.ErrorCode非0表示登录失败 <br/>
 
-public Deliver OnDeliver()
-说明：查询上行消息
-该方法为阻塞方式调用，直到有上行消息才会返回。
+public Deliver OnDeliver()<br/>
+说明：查询上行消息<br/>
+该方法为阻塞方式调用，直到有上行消息才会返回。<br/>
 
-public Deliver getDeliver()
-说明：查询上行消息
-该方法为非阻塞方式调用，如当时无上行消息会返回空值。
+public Deliver getDeliver()<br/>
+说明：查询上行消息<br/>
+该方法为非阻塞方式调用，如当时无上行消息会返回空值。<br/>
 
-public Result Send(Submit submit) 
-说明：发送消息
+public Result Send(Submit submit) <br/>
+说明：发送消息<br/>
 
-1.2 Submit类：
-public Submit()
-说明：初始化一个类
-类会使用初始化值创建submit类
-缺省值如下
-MsgType = 6;
-NeedReport = 0;
-Priority = 0;
-ServiceID = "";
-Feetype = "00";
-FeeCode = "000";
-FixedFee = "000";
-MsgFormat = 15;
-ValidTime = "";
-AtTime = "";
-SrcTermid = "";
-DestTermid = "";
-ChargeTermid = "";
-MsgLength = 0;
-MsgContent = null
-Reserve = null
-ProductID = ""
-LinkID = ""
-OtherTlvArray = null
-Submit本身为一个java bean,可以通过set变量名，或者get变量名的方法，设置和获取
+1.2 Submit类：<br/>
+public Submit()<br/>
+说明：初始化一个类<br/>
+类会使用初始化值创建submit类<br/>
+缺省值如下<br/>
+MsgType = 6;<br/>
+NeedReport = 0;<br/>
+Priority = 0;<br/>
+ServiceID = "";<br/>
+Feetype = "00";<br/>
+FeeCode = "000";<br/>
+FixedFee = "000";<br/>
+MsgFormat = 15;<br/>
+ValidTime = "";<br/>
+AtTime = "";<br/>
+SrcTermid = "";<br/>
+DestTermid = "";<br/>
+ChargeTermid = "";<br/>
+MsgLength = 0;<br/>
+MsgContent = null<br/>
+Reserve = null<br/>
+ProductID = ""<br/>
+LinkID = ""<br/>
+OtherTlvArray = null<br/>
+Submit本身为一个java bean,可以通过set变量名，或者get变量名的方法，设置和获取<br/>
 
-public Submit(int msgtype, int needreport, int priority, String serviceid, String feetype, String feecode, String fixedfee, int msgformat, String validtime, String attime, String srctermid, String desttermid, String chargetermid, int msglength, byte[] msgcontent, byte[] reserve, String productid, String Linkid)
-说明：初始化一个类，并设置值
-Msgtype：消息类型，MT消息统一设为6
-Needreport:是否需要状态报告
-Priority：消息优先级
-Serviceid：服务代码，在浙江的电信的ismp平台，该代码无效
-Feetype：计费类型，免费设00,按次设01，包月是02，封顶03
-Feecode：按次费用
-Fixedfee：包月费用，如果Feetype为03
-Msgformat：消息编码，0为ASCII,15为GBK编码，8位UCS-2编码
-Validtime：消息有效时间
-Attime：定时发送时间
-Srctermid：源地址号码
-Desttermid：目的号码
-Chargetermid：计费号码
-Msglength：消息长度
-Msgcontent：消息内容
-Reserve：保留字段
-Productid：产品编号
-Linkid：点播下发时需要将deliver消息里面的linkid作为消息的Linkid下发
+public Submit(int msgtype, int needreport, int priority, String serviceid, String feetype, String feecode, String fixedfee, int msgformat, String validtime, String attime, String srctermid, String desttermid, String chargetermid, int msglength, byte[] msgcontent, byte[] reserve, String productid, String Linkid)<br/>
+说明：初始化一个类，并设置值<br/>
+Msgtype：消息类型，MT消息统一设为6<br/>
+Needreport:是否需要状态报告<br/>
+Priority：消息优先级<br/>
+Serviceid：服务代码，在浙江的电信的ismp平台，该代码无效<br/>
+Feetype：计费类型，免费设00,按次设01，包月是02，封顶03<br/>
+Feecode：按次费用<br/>
+Fixedfee：包月费用，如果Feetype为03<br/>
+Msgformat：消息编码，0为ASCII,15为GBK编码，8位UCS-2编码<br/>
+Validtime：消息有效时间<br/>
+Attime：定时发送时间<br/>
+Srctermid：源地址号码<br/>
+Desttermid：目的号码<br/>
+Chargetermid：计费号码<br/>
+Msglength：消息长度<br/>
+Msgcontent：消息内容<br/>
+Reserve：保留字段<br/>
+Productid：产品编号<br/>
+Linkid：点播下发时需要将deliver消息里面的linkid作为消息的Linkid下发<br/>
 
-public Submit(String srctermid, String desttermid, byte[] msgconent)
-说明：初始化一个类，并设置值，未设置的值为初始值
-Srctermid：源地址号码
-Desttermid：目的号码，计费号码会使用Desttermid替换
-Msgconent：消息体，格式为byte数组
+public Submit(String srctermid, String desttermid, byte[] msgconent)<br/>
+说明：初始化一个类，并设置值，未设置的值为初始值<br/>
+Srctermid：源地址号码<br/>
+Desttermid：目的号码，计费号码会使用Desttermid替换<br/>
+Msgconent：消息体，格式为byte数组<br/>
 
 
-public Submit(String srctermid, String desttermid, String msgconent)
-说明：初始化一个类，并设置值，未设置的值为初始值
-Srctermid：源地址号码
-Desttermid：目的号码，计费号码会使用Desttermid替换
-Msgconent：消息体，格式为字符串
+public Submit(String srctermid, String desttermid, String msgconent)<br/>
+说明：初始化一个类，并设置值，未设置的值为初始值<br/>
+Srctermid：源地址号码<br/>
+Desttermid：目的号码，计费号码会使用Desttermid替换<br/>
+Msgconent：消息体，格式为字符串<br/>
+
+public Submit(String srctermid, String desttermid, String msgconent,<br/>
+			String productid)<br/>
+说明：初始化一个类，并设置值，未设置的值为初始值<br/>
+Srctermid：源地址号码<br/>
+Desttermid：目的号码，计费号码会使用Desttermid替换<br/>
+Msgconent：消息体，格式为字符串<br/>
+Productid：产品编号<br/>
+
 
 public Submit(String srctermid, String desttermid, String msgconent,
-			String productid)
-说明：初始化一个类，并设置值，未设置的值为初始值
-Srctermid：源地址号码
-Desttermid：目的号码，计费号码会使用Desttermid替换
-Msgconent：消息体，格式为字符串
-Productid：产品编号
-
-public Submit(String srctermid, String desttermid, String msgconent,
-			String productid)
-说明：初始化一个类，并设置值，未设置的值为初始值
-Srctermid：源地址号码
-Desttermid：目的号码，计费号码会使用Desttermid替换
-Msgconent：消息体，格式为字符串
-Productid：产品编号
+			String productid)<br/>
+说明：初始化一个类，并设置值，未设置的值为初始值<br/>
+Srctermid：源地址号码<br/>
+Desttermid：目的号码，计费号码会使用Desttermid替换<br/>
+Msgconent：消息体，格式为字符串<br/>
+Productid：产品编号<br/>
 
 public Submit(String srctermid, String desttermid, byte[] msgconent,
-			String productid)
-说明：初始化一个类，并设置值，未设置的值为初始值
-Srctermid：源地址号码
-Desttermid：目的号码，计费号码会使用Desttermid替换
-Msgconent：消息体，格式为byte数组
-Productid：产品编号
+			String productid)<br/>
+说明：初始化一个类，并设置值，未设置的值为初始值<br/>
+Srctermid：源地址号码<br/>
+Desttermid：目的号码，计费号码会使用Desttermid替换<br/>
+Msgconent：消息体，格式为byte数组<br/>
+Productid：产品编号<br/>
 
-public void AddTlv(int tag, String value)
-说明:tlv字段，srcMsg是企业代码，在初始化client时候统一设置无需这里单独设置，另外Productid和linkid可以直接设置，也无需使用该方法设置
-Tag:tlv tag标记
-Value：值
+public void AddTlv(int tag, String value)<br/>
+说明:tlv字段，srcMsg是企业代码，在初始化client时候统一设置无需这里单独设置，另外Productid和linkid可以直接设置，也无需使用该方法设置<br/>
+Tag:tlv tag标记<br/>
+Value：值<br/>
 
 2 api使用
 2.1发送消息：
-Client client = new Client("61.130.246.114", 8890, 0, "与网关连接帐号",
+Client client = new Client("189.189.189.189", 8890, 0, "与网关连接帐号",
 				"与网关连接密码", "ISMP上的企业代码");
 Submit submit = new Submit("10620068", "18967441118", "Test中文",
 				"112000000000061090527");
@@ -150,7 +151,7 @@ Result result=client.Send(submit);
 
 2.2接收消息：
 2.2.1非等待方式：
-Client client = new Client("61.130.246.114", 8890, 1, "与网关连接帐号",
+Client client = new Client("189.189.189.189", 8890, 1, "与网关连接帐号",
 				"与网关连接密码", "ISMP上的企业代码");
 Deliver dl=client.getDeliver();
 if (dl!=null){		 System.out.println("---------------Deliver---------------");
@@ -165,7 +166,7 @@ if (dl!=null){		 System.out.println("---------------Deliver---------------");
 		}
 
 2.2.2等待方式：
-Client client = new Client("61.130.246.114", 8890, 1, "与网关连接帐号",
+Client client = new Client("189.189.189.189", 8890, 1, "与网关连接帐号",
 				"与网关连接密码", "ISMP上的企业代码");	
 Deliver dl = client.OnDeliver();
 System.out.println("---------------Deliver---------------");
