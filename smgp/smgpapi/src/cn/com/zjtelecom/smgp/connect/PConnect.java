@@ -355,7 +355,7 @@ public class PConnect extends Thread {
 			long sendTime = getTimeStamp();
 			Package tmppack = new Package();
 			while ((getTimeStamp() - sendTime) < 60000
-					&& ((tmppack = checkPackage(0, RequestId.Submit_Resp)) != null)) {
+					&& ((tmppack = checkPackage(0, RequestId.Exit_Resp)) != null)) {
 				try {
 					synchronized (this) {
 						wait(60000);
