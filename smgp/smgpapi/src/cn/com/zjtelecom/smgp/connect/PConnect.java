@@ -63,6 +63,7 @@ public class PConnect extends Thread {
 	private int HasConnected = 0;
 	private int HasLogin = 0;
 	private int Logout = 0;
+	
 
 	/*
 	 * 日志文件
@@ -260,10 +261,10 @@ public class PConnect extends Thread {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				// e.printStackTrace();
-				if (this.DisplayMode >= 1) {
+				if (this.DisplayMode >= 1 && this.Logout==0) {
 					System.out.println("Lost Connect,ReConnect");
 				}
-				this.ReConnect(1000);
+				if (this.Logout==0) this.ReConnect(1000);
 				// this.resume();
 				continue;
 			}
