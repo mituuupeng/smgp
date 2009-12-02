@@ -46,14 +46,15 @@ public class Client {
     	return this.pconnect.SendFlashSms(submit);
     }
     
-    public synchronized Result SendWapPush(String disc, String url,String srcTermId,String destTermid,String productID){
+    /*public synchronized Result SendWapPush(String disc, String url,String srcTermId,String destTermid,String productID){
     	return this.pconnect.SendWapPush(disc, url, srcTermId, destTermid, productID);
     }
     
 	public synchronized Result SendWapPush(String desc, String url,
 			Submit submit){
 		return this.pconnect.SendWapPush(desc, url, submit);
-	}
+	}*/
+    
 	public void setDisplayMode(int displaymode) {
 		this.pconnect.setDisplayMode(displaymode);
 	}
