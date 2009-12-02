@@ -63,7 +63,6 @@ public class PConnect extends Thread {
 	private int HasConnected = 0;
 	private int HasLogin = 0;
 	private int Logout = 0;
-	
 
 	/*
 	 * 日志文件
@@ -93,6 +92,7 @@ public class PConnect extends Thread {
 		this.ClientPasswd = clientpasswd;
 		this.SPID = spid;
 		this.DisplayMode = displaymode;
+		this.SequenceId = GetStartSeq();
 		this.Connect();
 		// this.Login();
 	}
@@ -105,6 +105,7 @@ public class PConnect extends Thread {
 		this.ClientID = clientid;
 		this.ClientPasswd = clientpasswd;
 		this.SPID = spid;
+		this.SequenceId = GetStartSeq();
 		this.Connect();
 		// this.Login();
 	}
@@ -261,10 +262,11 @@ public class PConnect extends Thread {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				// e.printStackTrace();
-				if (this.DisplayMode >= 1 && this.Logout==0) {
+				if (this.DisplayMode >= 1 && this.Logout == 0) {
 					System.out.println("Lost Connect,ReConnect");
 				}
-				if (this.Logout==0) this.ReConnect(1000);
+				if (this.Logout == 0)
+					this.ReConnect(1000);
 				// this.resume();
 				continue;
 			}
@@ -465,134 +467,105 @@ public class PConnect extends Thread {
 	public synchronized Result SendWapPush(String desc, String url,
 			String srcTermId, String destTermid, String productID) {
 
-		Submit [] submitarray=WapPushPdu.getWapPushSubmit(desc,url,srcTermId,destTermid,destTermid, productID);
-        Result result=null;
-        Result resulttmp=null;
-		for (int i=0;i<submitarray.length;i++){
+		Submit[] submitarray = WapPushPdu.getWapPushSubmit(desc, url,
+				srcTermId, destTermid, destTermid, productID);
+		Result result = null;
+		Result resulttmp = null;
+		for (int i = 0; i < submitarray.length; i++) {
 			resulttmp = this.Send(submitarray[i]);
-			//System.out.println(Hex.rhex(submitarray[i].getMsgContent()));
-			if (result==null || resulttmp.ErrorCode!=0){
-				result=resulttmp;
+			// System.out.println(Hex.rhex(submitarray[i].getMsgContent()));
+			if (result == null || resulttmp.ErrorCode != 0) {
+				result = resulttmp;
 			}
 		}
 		return result;
 	}
-	
+
 	public synchronized Result SendWapPush(String desc, String url,
 			Submit submit) {
 
-		Submit [] submitarray=WapPushPdu.getWapPushSubmit(desc,url,submit);
-        Result result=null;
-        Result resulttmp=null;
-		for (int i=0;i<submitarray.length;i++){
+		Submit[] submitarray = WapPushPdu.getWapPushSubmit(desc, url, submit);
+		Result result = null;
+		Result resulttmp = null;
+		for (int i = 0; i < submitarray.length; i++) {
 			resulttmp = this.Send(submitarray[i]);
-			//System.out.println(Hex.rhex(submitarray[i].getMsgContent()));
-			if (result==null || resulttmp.ErrorCode!=0){
-				result=resulttmp;
+			// System.out.println(Hex.rhex(submitarray[i].getMsgContent()));
+			if (result == null || resulttmp.ErrorCode != 0) {
+				result = resulttmp;
 			}
 		}
 		return result;
 	}
-	
-	
-	/*public synchronized Result SendWapPush(String disc, String url,
-			String srcTermId, String destTermid, String productID) {
-
-		Submit submit = new Submit();
-		try {
-			submit.setMsgContent(getWapPushPdu(disc, url));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		submit.setMsgFormat(4);
-		submit.AddTlv(TlvId.TP_udhi, "1");
-		submit.setDestTermid(destTermid);
-		submit.setSrcTermid(srcTermId);
-		submit.setProductID(productID);
-		submit.setMsgType(7);
-
-		System.out.println("msg len:" + submit.getMsgLength());
-
-		return this.Send(submit);
-	}*/
 
 	/*
-	 private static byte[] getWapPushPdu(String disc, String url)
-	 
-			throws UnsupportedEncodingException {
+	 * public synchronized Result SendWapPush(String disc, String url, String
+	 * srcTermId, String destTermid, String productID) {
+	 * 
+	 * Submit submit = new Submit(); try {
+	 * submit.setMsgContent(getWapPushPdu(disc, url)); } catch
+	 * (UnsupportedEncodingException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); } submit.setMsgFormat(4);
+	 * submit.AddTlv(TlvId.TP_udhi, "1"); submit.setDestTermid(destTermid);
+	 * submit.setSrcTermid(srcTermId); submit.setProductID(productID);
+	 * submit.setMsgType(7);
+	 * 
+	 * System.out.println("msg len:" + submit.getMsgLength());
+	 * 
+	 * return this.Send(submit); }
+	 */
 
-		byte[] WapPushDisc = disc.getBytes("UTF-8");
-		byte[] WapPushUrl = url.getBytes("UTF-8");
-
-		byte WapPushHeader1[] = { 0x0B, // WAP PUSH 头部的总长度
-				// 长短信
-				0x00, // 标志这是个分拆短信
-				0x03, // 分拆数据元素的长度
-				0x03, // 长短信seq序号
-				0x01, // 总共1条
-				0x01, // 第1条
-				// WAP PUSH
-				0x05, // WAP Push
-				0x04, // 分拆数据元素的长度
-				0x0B, //
-				(byte) 0x84,//
-				0x23, //
-				(byte) 0xF0 //
-		};
-		byte WapPushHeader2[] = { 0x29, 0x06, 0x06, 0x03, (byte) 0xAE,
-				(byte) 0x81, (byte) 0xEA, (byte) 0x8D, (byte) 0xCA }; // WSP
-
-		byte WapPushIndicator[] = { 0x02, // 标记位
-				0x05, // WAPFORUM//DTD SI 1.0//EN
-				0x6A, // UTF-8
-				0x00, // 标记开始
-				0x45, // <si>
-				(byte) 0xC6,// <indication
-				0x0C, // href="http://
-				0x03 }; // 字符串开始
-		byte WapPushDisplayTextHeader[] = { 0x00, // URL 字符串结束
-				0x01, // >
-				0x03 // 内容描述字符串开始
-		};
-
-		byte EndOfWapPush[] = { 0x00, //内容描述字符串结束 
-				                0x01, //</si> 
-				                0x01  //</indication> 
-				                };
-		
-		byte returnbyte[] = new byte[35 + WapPushDisc.length
-				+ WapPushUrl.length];
-		int nav = 0;
-		System.arraycopy(WapPushHeader1, 0, returnbyte, nav,
-				WapPushHeader1.length);
-		nav = nav + WapPushHeader1.length;
-
-		System.arraycopy(WapPushHeader2, 0, returnbyte, nav,
-				WapPushHeader2.length);
-		nav = nav + WapPushHeader2.length;
-
-		System.arraycopy(WapPushIndicator, 0, returnbyte, nav,
-				WapPushIndicator.length);
-		nav = nav + WapPushIndicator.length;
-
-		System.arraycopy(WapPushUrl, 0, returnbyte, nav, WapPushUrl.length);
-		nav = nav + WapPushUrl.length;
-
-		System.arraycopy(WapPushDisplayTextHeader, 0, returnbyte, nav,
-				WapPushDisplayTextHeader.length);
-		nav = nav + WapPushDisplayTextHeader.length;
-
-		System.arraycopy(WapPushDisc, 0, returnbyte, nav, WapPushDisc.length);
-		nav = nav + WapPushDisc.length;
-
-		System.arraycopy(EndOfWapPush, 0, returnbyte, nav, EndOfWapPush.length);
-		nav = nav + EndOfWapPush.length;
-
-		return returnbyte;
-
-	}
-	*/
+	/*
+	 * private static byte[] getWapPushPdu(String disc, String url)
+	 * 
+	 * throws UnsupportedEncodingException {
+	 * 
+	 * byte[] WapPushDisc = disc.getBytes("UTF-8"); byte[] WapPushUrl =
+	 * url.getBytes("UTF-8");
+	 * 
+	 * byte WapPushHeader1[] = { 0x0B, // WAP PUSH 头部的总长度 // 长短信 0x00, //
+	 * 标志这是个分拆短信 0x03, // 分拆数据元素的长度 0x03, // 长短信seq序号 0x01, // 总共1条 0x01, // 第1条
+	 * // WAP PUSH 0x05, // WAP Push 0x04, // 分拆数据元素的长度 0x0B, // (byte) 0x84,//
+	 * 0x23, // (byte) 0xF0 // }; byte WapPushHeader2[] = { 0x29, 0x06, 0x06,
+	 * 0x03, (byte) 0xAE, (byte) 0x81, (byte) 0xEA, (byte) 0x8D, (byte) 0xCA };
+	 * // WSP
+	 * 
+	 * byte WapPushIndicator[] = { 0x02, // 标记位 0x05, // WAPFORUM//DTD SI
+	 * 1.0//EN 0x6A, // UTF-8 0x00, // 标记开始 0x45, // <si> (byte) 0xC6,//
+	 * <indication 0x0C, // href="http:// 0x03 }; // 字符串开始 byte
+	 * WapPushDisplayTextHeader[] = { 0x00, // URL 字符串结束 0x01, // > 0x03 //
+	 * 内容描述字符串开始 };
+	 * 
+	 * byte EndOfWapPush[] = { 0x00, //内容描述字符串结束 0x01, //</si> 0x01
+	 * //</indication> };
+	 * 
+	 * byte returnbyte[] = new byte[35 + WapPushDisc.length +
+	 * WapPushUrl.length]; int nav = 0; System.arraycopy(WapPushHeader1, 0,
+	 * returnbyte, nav, WapPushHeader1.length); nav = nav +
+	 * WapPushHeader1.length;
+	 * 
+	 * System.arraycopy(WapPushHeader2, 0, returnbyte, nav,
+	 * WapPushHeader2.length); nav = nav + WapPushHeader2.length;
+	 * 
+	 * System.arraycopy(WapPushIndicator, 0, returnbyte, nav,
+	 * WapPushIndicator.length); nav = nav + WapPushIndicator.length;
+	 * 
+	 * System.arraycopy(WapPushUrl, 0, returnbyte, nav, WapPushUrl.length); nav
+	 * = nav + WapPushUrl.length;
+	 * 
+	 * System.arraycopy(WapPushDisplayTextHeader, 0, returnbyte, nav,
+	 * WapPushDisplayTextHeader.length); nav = nav +
+	 * WapPushDisplayTextHeader.length;
+	 * 
+	 * System.arraycopy(WapPushDisc, 0, returnbyte, nav, WapPushDisc.length);
+	 * nav = nav + WapPushDisc.length;
+	 * 
+	 * System.arraycopy(EndOfWapPush, 0, returnbyte, nav, EndOfWapPush.length);
+	 * nav = nav + EndOfWapPush.length;
+	 * 
+	 * return returnbyte;
+	 * 
+	 * }
+	 */
 
 	public synchronized Result SendFlashSms(Submit submit) {
 		submit.setMsgContent(addFlashSmsHeader(submit.getMsgContent()));
@@ -603,7 +576,7 @@ public class PConnect extends Thread {
 	}
 
 	private static byte[] addFlashSmsHeader(byte[] content) {
-		//int curlong = content.length;
+		// int curlong = content.length;
 		byte[] newcontent = new byte[content.length + 2];
 		newcontent[0] = 0x00;
 		newcontent[1] = 0x01;
@@ -612,7 +585,7 @@ public class PConnect extends Thread {
 	}
 
 	private static byte[] addContentHeader(byte[] content, int total, int num) { // 为了加消息头参数为（原数据,总条数,当前条数）
-		//int curlong = content.length;
+		// int curlong = content.length;
 		byte[] newcontent = new byte[content.length + 6];
 		newcontent[0] = 0x05;
 		newcontent[1] = 0x00;
@@ -884,7 +857,7 @@ public class PConnect extends Thread {
 	private static String GetTime() {
 		String TimeStamp = "";
 		Calendar now = Calendar.getInstance();
-		now.getTime();
+		// now.getTime();
 		SimpleDateFormat bartDateFormat = new SimpleDateFormat(
 				"yyyy-MM-dd HH:mm:ss");
 		return (bartDateFormat.format(now.getTime()));
@@ -896,5 +869,12 @@ public class PConnect extends Thread {
 		 * FormatInt(Integer.toString(now.MINUTE ))+":" +
 		 * FormatInt(Integer.toString(now.SECOND)); return TimeStamp;
 		 */
+	}
+
+	private static int GetStartSeq() {
+		SimpleDateFormat bartDateFormat = new SimpleDateFormat("HHmmss");
+		Calendar now = Calendar.getInstance();
+		// now.getTime();
+		return Integer.parseInt(bartDateFormat.format(now.getTime()));
 	}
 }
