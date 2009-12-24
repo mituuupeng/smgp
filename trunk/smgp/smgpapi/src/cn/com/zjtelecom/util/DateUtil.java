@@ -13,7 +13,9 @@ public class DateUtil {
 				+ FormatInt(Integer.toString(now.SECOND + 1));
 		return TimeStamp;
 	}
-
+	public static Long getTimeStamp() {
+		return (new java.util.Date()).getTime();
+	}
 	private static String FormatInt(String value) {
 		if (value.length() == 1) {
 			return "0" + value;
