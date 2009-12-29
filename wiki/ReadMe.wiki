@@ -145,11 +145,13 @@ Value：值<br/>
 
 2 api使用
 2.1发送消息：
+{{{
 Client client = new Client("189.189.189.189", 8890, 0, "与网关连接帐号",
 				"与网关连接密码", "ISMP上的企业代码");
 Submit submit = new Submit("10620068", "18967441118", "Test中文",
 				"112000000000061090527");
 Result result=client.Send(submit);
+}}}
 
 2.2接收消息：
 2.2.1非等待方式：
