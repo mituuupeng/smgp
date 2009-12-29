@@ -56,25 +56,27 @@ public Submit()<br/>
 说明：初始化一个类<br/>
 类会使用初始化值创建submit类<br/>
 缺省值如下<br/>
-MsgType = 6;<br/>
-NeedReport = 0;<br/>
-Priority = 0;<br/>
-ServiceID = "";<br/>
-Feetype = "00";<br/>
-FeeCode = "000";<br/>
-FixedFee = "000";<br/>
-MsgFormat = 15;<br/>
-ValidTime = "";<br/>
-AtTime = "";<br/>
-SrcTermid = "";<br/>
-DestTermid = "";<br/>
-ChargeTermid = "";<br/>
-MsgLength = 0;<br/>
-MsgContent = null<br/>
-Reserve = null<br/>
-ProductID = ""<br/>
-LinkID = ""<br/>
-OtherTlvArray = null<br/>
+{{{
+MsgType = 6;
+NeedReport = 0;
+Priority = 0;
+ServiceID = "";
+Feetype = "00";
+FeeCode = "000";
+FixedFee = "000";
+MsgFormat = 15;
+ValidTime = "";
+AtTime = "";
+SrcTermid = "";
+DestTermid = "";
+ChargeTermid = "";
+MsgLength = 0;
+MsgContent = null;
+Reserve = null;
+ProductID = "";
+LinkID = "";
+OtherTlvArray = null;
+}}}
 Submit本身为一个java bean,可以通过set变量名，或者get变量名的方法，设置和获取<br/>
 
 public Submit(int msgtype, int needreport, int priority, String serviceid, String feetype, String feecode, String fixedfee, int msgformat, String validtime, String attime, String srctermid, String desttermid, String chargetermid, int msglength, byte[] msgcontent, byte[] reserve, String productid, String Linkid)<br/>
@@ -151,6 +153,7 @@ Result result=client.Send(submit);
 
 2.2接收消息：
 2.2.1非等待方式：
+{{{
 Client client = new Client("189.189.189.189", 8890, 1, "与网关连接帐号",
 				"与网关连接密码", "ISMP上的企业代码");
 Deliver dl=client.getDeliver();
@@ -164,8 +167,10 @@ if (dl!=null){		 System.out.println("---------------Deliver---------------");
 		}else {
 			System.out.println("no deliver");
 		}
+}}}
 
 2.2.2等待方式：
+{{{
 Client client = new Client("189.189.189.189", 8890, 1, "与网关连接帐号",
 				"与网关连接密码", "ISMP上的企业代码");	
 Deliver dl = client.OnDeliver();
@@ -177,3 +182,4 @@ System.out.println("---------------Deliver---------------");
 					System.out.println("LinkID:" + dl.LinkID);
 		
 System.out.println("-------------------------------------");
+}}}
