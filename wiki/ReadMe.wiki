@@ -7,8 +7,8 @@
 
 = API使用简介 =
 
-1、类说明<br/>
-1.1Client类：<br/>
+==类说明==
+===Client类===
 类命名空间：cn.com.zjtelecom.smgp<br/>
 public Client(String Host, int port, int LoginMode, String clientid,<br/>
 			String ClientPasswd, String SPID) 
@@ -51,7 +51,7 @@ public Deliver getDeliver()<br/>
 public Result Send(Submit submit) <br/>
 说明：发送消息<br/>
 
-1.2 Submit类：<br/>
+===Submit类===
 public Submit()<br/>
 说明：初始化一个类<br/>
 类会使用初始化值创建submit类<br/>
@@ -143,8 +143,8 @@ public void AddTlv(int tag, String value)<br/>
 Tag:tlv tag标记<br/>
 Value：值<br/>
 
-2 api使用
-2.1发送消息：
+==api使用==
+===发送消息===
 {{{
 Client client = new Client("189.189.189.189", 8890, 0, "与网关连接帐号",
 				"与网关连接密码", "ISMP上的企业代码");
@@ -153,8 +153,8 @@ Submit submit = new Submit("10620068", "18967441118", "Test中文",
 Result result=client.Send(submit);
 }}}
 
-2.2接收消息：
-2.2.1非等待方式：
+===接收消息===
+====非等待方式====
 {{{
 Client client = new Client("189.189.189.189", 8890, 1, "与网关连接帐号",
 				"与网关连接密码", "ISMP上的企业代码");
@@ -171,7 +171,7 @@ if (dl!=null){		 System.out.println("---------------Deliver---------------");
 		}
 }}}
 
-2.2.2等待方式：
+====等待方式====
 {{{
 Client client = new Client("189.189.189.189", 8890, 1, "与网关连接帐号",
 				"与网关连接密码", "ISMP上的企业代码");	
