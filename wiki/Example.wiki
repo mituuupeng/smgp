@@ -1,8 +1,8 @@
 #API使用例子.
 
-= 使用cn.com.zjtelecom.smgp.Client =
+=1.使用cn.com.zjtelecom.smgp.Client =
 
-==登录==
+==1.1登录==
 {{{
 //Client("服务器ip地址","服务器端口号",LoginMode,"账号","密码","企业代码",显示模式)
 Client client = new Client("189.189.189.189", 8890, 2, "account","password", "12100001", 0);
@@ -13,7 +13,7 @@ System.out.println("ErrorDescription:"+result.ErrorDescription);
 
 调用client.Login()非必须方式，如果程序登录没有问题，无须先调用Login,api本身会自动调用
 
-==发送==
+==1.2发送==
 {{{
 //Client("服务器ip地址","服务器端口号",LoginMode,"账号","密码","企业代码",显示模式)
 Client client = new Client("189.189.189.189", 8890, 2, "account","password", "12100001", 0);
@@ -21,7 +21,7 @@ Client client = new Client("189.189.189.189", 8890, 2, "account","password", "12
 Submit submit = new Submit("10620068", "18967441118", "你好！","112000000000061090527"); Result result = client.Send(submit);
 System.out.println("ErrorCode:"+result.ErrorCode);System.out.println("MsgID:"+result.ErrorDescription);
 }}}
-==接收==
+==1.3接收==
 {{{
 Client client = new Client("短信网关ip地址", 8890, 2, "短信网关账号", "短信网关密码",
         "企业代码（8位长）", 0); // new Client("IP地址",端口,登录模式,"帐号","密码")
@@ -54,12 +54,12 @@ do {
 
 }}}
 
-= 事件触发方式 =
+= 2.事件触发方式 =
 
 由于cn.com.zjtelecom.smgp.Client在提交Submit消息时，等待Submit_Resp，导致发送速度较慢。ClientEvent类修改为发送Submit消息时，只返回Submit包的SeqID,而Submit_Resp和Deliver通过调用程序实现接口ClientEventInterface的方法，ClientEvent通过onDeliver和OnSubmitResp来回调该方法，通知程序收到Submit_resp和上行消息
 
 
-= 例子 =
+= 2.1例子 =
 
 
 {{{
