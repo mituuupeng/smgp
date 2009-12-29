@@ -4,12 +4,20 @@
 
 ==登录==
 {{{
-//Client("服务器ip地址","服务器端口号",LoginMode,"账号","密码","企业代码",显示模式)Client client = new Client("189.189.189.189", 8890, 2, "account","password", "12100001", 0);Result result = client.Login();System.out.println("ErrorCode:"+result.ErrorCode);System.out.println("ErrorDescription:"+result.ErrorDescription);
+//Client("服务器ip地址","服务器端口号",LoginMode,"账号","密码","企业代码",显示模式)
+Client client = new Client("189.189.189.189", 8890, 2, "account","password", "12100001", 0);
+Result result = client.Login();
+System.out.println("ErrorCode:"+result.ErrorCode);
+System.out.println("ErrorDescription:"+result.ErrorDescription);
 }}}
 
 ==发送==
 {{{
-//Client("服务器ip地址","服务器端口号",LoginMode,"账号","密码","企业代码",显示模式)Client client = new Client("189.189.189.189", 8890, 2, "account","password", "12100001", 0);//submit("主叫号码","被叫号码","内容","产品编号")Submit submit = new Submit("10620068", "18967441118", "你好！","112000000000061090527"); Result result = client.Send(submit);System.out.println("ErrorCode:"+result.ErrorCode);System.out.println("MsgID:"+result.ErrorDescription);
+//Client("服务器ip地址","服务器端口号",LoginMode,"账号","密码","企业代码",显示模式)
+Client client = new Client("189.189.189.189", 8890, 2, "account","password", "12100001", 0);
+//submit("主叫号码","被叫号码","内容","产品编号")
+Submit submit = new Submit("10620068", "18967441118", "你好！","112000000000061090527"); Result result = client.Send(submit);
+System.out.println("ErrorCode:"+result.ErrorCode);System.out.println("MsgID:"+result.ErrorDescription);
 }}}
 ==接收==
 {{{
