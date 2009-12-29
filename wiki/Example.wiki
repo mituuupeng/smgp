@@ -11,6 +11,8 @@ System.out.println("ErrorCode:"+result.ErrorCode);
 System.out.println("ErrorDescription:"+result.ErrorDescription);
 }}}
 
+调用client.Login()非必须方式，如果程序登录没有问题，无须先调用Login,api本身会自动调用
+
 ==发送==
 {{{
 //Client("服务器ip地址","服务器端口号",LoginMode,"账号","密码","企业代码",显示模式)
