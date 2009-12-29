@@ -1,0 +1,47 @@
+#API使用例子.
+
+= 使用cn.com.zjtelecom.smgp.Client =
+
+==登录==
+{{{
+//Client("服务器ip地址","服务器端口号",LoginMode,"账号","密码","企业代码",显示模式)Client client = new Client("189.189.189.189", 8890, 2, "account","password", "12100001", 0);Result result = client.Login();System.out.println("ErrorCode:"+result.ErrorCode);System.out.println("ErrorDescription:"+result.ErrorDescription);
+}}}
+
+==发送==
+{{{
+//Client("服务器ip地址","服务器端口号",LoginMode,"账号","密码","企业代码",显示模式)Client client = new Client("189.189.189.189", 8890, 2, "account","password", "12100001", 0);//submit("主叫号码","被叫号码","内容","产品编号")Submit submit = new Submit("10620068", "18967441118", "你好！","112000000000061090527"); Result result = client.Send(submit);System.out.println("ErrorCode:"+result.ErrorCode);System.out.println("MsgID:"+result.ErrorDescription);
+}}}
+==接收==
+{{{
+Client client = new Client("短信网关ip地址", 8890, 2, "短信网关账号", "短信网关密码",
+        "企业代码（8位长）", 0); // new Client("IP地址",端口,登录模式,"帐号","密码")
+
+Result result = client.Login();
+System.out.println("---------------Login---------------");
+System.out.println("Code:" + result.ErrorCode);
+System.out.println("DEsc:" + result.ErrorDescription);
+System.out.println("-----------------------------------");
+
+
+if (result.ErrorCode == 0) {   //登录成功
+int i = 1;
+do {
+        Deliver dl = client.OnDeliver();
+
+        if (dl.IsReport != 1) {
+                System.out.println("---------------Deliver---------------");
+                System.out.println("SrcTermID:" + dl.SrcTermID);
+                System.out.println("DestTermID:" + dl.DestTermID);
+                System.out.println("MsgContent:"
+                                + new String(dl.MsgContent));
+                System.out.println("LinkID:" + dl.LinkID);
+                System.out.println("-------------------------------------");
+
+                //上行处理程序扔这里
+                              }
+     }while(true);
+  }
+
+}}}
+
+= 使用cn.com.zjtelecom.smgp.ClientEvent =
