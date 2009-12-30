@@ -1,22 +1,22 @@
 #其他说明
 
-= 网络异常情况 =
+= 1. 网络异常情况 =
 
 API在出现网络异常以后，会等待5秒后自动重新登录，无须自行处理重连。
 
 在网络断开期间，Client.Send发送一个Submit的时候，会返回Status为-1的错误，出现此类情况，建议程序自行Sleep 5秒以上后重发
 
 
----- 
 
-= 调试 =
 
-== 初始化Client时设置显示模式 ==
+= 2. 调试 =
+
+== 2.1 初始化Client时设置显示模式 ==
 Client client = new Client("网关ip地址", 8890, 2, "网关账号",
                                 "网关密码", "企业代码", *0*);
-最后一个参数为显示模式，如果为0表示不显示调试信息，设置4以上会显示全部调试信息。
+最后一个参数为显示模式，如果为0表示不显示调试信息，设置4以上会显示全部调试信息。同样ClientEvent类也可以采用类似操作。
 
-== SetLogFile==
+== 2.2 通过SetLogFile设置日志文件==
 
 cn.com.zjtelecom.smgp.Client和cn.com.zjtelecom.smgp.ClientEvent都有方法SetLogFile(String LogFile)，设置日志的文件地址，比如client.setLogFile("log.txt"),来回的包就会保存在log.txt文件中。
 
@@ -28,3 +28,8 @@ cn.com.zjtelecom.smgp.Client和cn.com.zjtelecom.smgp.ClientEvent都有方法SetL
 [2009-04-27 13:53:38]Recv:0000001a800000020000000c5710610427135548252500000000
 [2009-04-27 13:53:38]Recv:0000000c0000000400000000
 [2009-04-27 13:53:38]Send:0000000c8000000400000000
+
+
+= 3. 关于短信模拟WapPush =
+
+在GSM网络里面，WapPush是只是通过UDH方式设置的，也就是说在短信内容里面存放已经转好好的wbxml数据即可。而CDMA的WapPush好需要这条短信的TeleServiceID为65002，而普通的短信是4908，通过短信网关是无法发送65002的短信的，所以无法通过SMGP网关发送WapPush
