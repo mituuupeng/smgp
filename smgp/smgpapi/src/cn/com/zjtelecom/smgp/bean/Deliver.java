@@ -17,6 +17,10 @@ public class Deliver {
 	public String ReportMsgID;
 	public int TP_udhi;
 	public Tlv[] OtherTlv;
+	
+	public Deliver(){
+		
+	}
 
 	public Deliver(DeliverMessage dm) {
 		this.MsgID = dm.MsgID;

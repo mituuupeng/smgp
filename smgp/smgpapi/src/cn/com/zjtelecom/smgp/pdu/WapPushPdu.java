@@ -78,7 +78,7 @@ public class WapPushPdu {
 			//PushHeader = ;
 			if (PushBody.length<(140-12)){
 				arraySubmit=new Submit[1];
-				arraySubmit[0]=new Submit(submit);
+				arraySubmit[0]=submit;
 				arraySubmit[0].AddTlv(TlvId.TP_udhi, "1");
 				arraySubmit[0].AddTlv(TlvId.TP_pid, "0");
 				//arraySubmit[0].setMsgType(0);
@@ -90,7 +90,7 @@ public class WapPushPdu {
 				Vector<byte[]> contentArray=SplitContent(PushBody);
 				arraySubmit=new Submit[contentArray.size()];
 				for (int i=0;i<contentArray.size();i++){
-					arraySubmit[i]=new Submit(submit);
+					arraySubmit[i]=submit;
 					arraySubmit[i].AddTlv(TlvId.TP_udhi, "1");
 					arraySubmit[i].AddTlv(TlvId.TP_pid, "0");
 					arraySubmit[i].setMsgFormat(4);

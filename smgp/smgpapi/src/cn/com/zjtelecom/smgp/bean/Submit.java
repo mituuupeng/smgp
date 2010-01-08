@@ -37,11 +37,15 @@ public class Submit {
 	private Tlv[] OtherTlvArray = null;
 	
 	private int isLongMsg =0;
+	
+	private int DestTermIDCount=1;
+	private String[] DestTermIDArray;
+	
 
 	public Submit(){
 		
 	}
-	public Submit(Submit submit) {
+/*	public Submit(Submit submit) {
 		this.MsgType = submit.MsgType;
 		this.NeedReport = submit.NeedReport;
 		this.Priority = submit.Priority;
@@ -63,6 +67,7 @@ public class Submit {
 		this.OtherTlvArray =submit.OtherTlvArray;
 		
 	}
+	*/
 
 	public Submit(int msgtype, int needreport, int priority, String serviceid,
 			String feetype, String feecode, String fixedfee, int msgformat,
@@ -364,6 +369,22 @@ public class Submit {
 		}else {
 			return false;
 		}
+	}
+
+	public void setDestTermIDCountOnly4Server(int destTermIDCount) {
+		DestTermIDCount = destTermIDCount;
+	}
+
+	public int getDestTermIDCount() {
+		return DestTermIDCount;
+	}
+
+	public void setDestTermIDArrayOnly4Server(String[] destTermIDArray) {
+		DestTermIDArray = destTermIDArray;
+	}
+
+	public String[] getDestTermIDArray() {
+		return DestTermIDArray;
 	}
 	
 }

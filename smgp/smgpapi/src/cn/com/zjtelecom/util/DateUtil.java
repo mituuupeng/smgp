@@ -1,6 +1,8 @@
 package cn.com.zjtelecom.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class DateUtil {
 	public static String GetTimeStamp() {
@@ -13,7 +15,7 @@ public class DateUtil {
 				+ FormatInt(Integer.toString(now.SECOND + 1));
 		return TimeStamp;
 	}
-	public static Long getTimeStamp() {
+	public static Long getTimeStampL() {
 		return (new java.util.Date()).getTime();
 	}
 	private static String FormatInt(String value) {
@@ -22,5 +24,10 @@ public class DateUtil {
 		} else {
 			return value;
 		}
+	}
+	
+	public static String GetTimeString() {
+		SimpleDateFormat sdf = new SimpleDateFormat("MMddHHmmss");
+		return sdf.format(new Date());
 	}
 }
