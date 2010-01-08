@@ -2,6 +2,8 @@ package cn.com.zjtelecom.smgp.message;
 
 import java.util.Vector;
 
+import cn.com.zjtelecom.smgp.bean.Deliver;
+import cn.com.zjtelecom.smgp.protocol.RequestId;
 import cn.com.zjtelecom.smgp.protocol.Tlv;
 import cn.com.zjtelecom.smgp.protocol.TlvId;
 import cn.com.zjtelecom.util.Hex;
@@ -22,24 +24,32 @@ public class DeliverMessage extends Message {
 	public int TP_udhi;
 	public String ReportMsgID;
 	public Tlv[] OtherTlv;
+	
+	public DeliverMessage (Deliver deliver){
+		//12是header,77是固定长度，还需包含tlv和msgconent
+		int len = 12+77+deliver.MsgLength;
+		buf = new byte[len];
+		// System.out.println("len:"+len);
+		TypeConvert.int2byte(len, buf, 0); // PacketLength
+		TypeConvert.int2byte(RequestId.Submit, buf, 4); // RequestID
+		TypeConvert.int2byte(this.sequence_Id, buf, 8); // sequence_Id
+	}
 
-	public DeliverMessage(byte[] buf) {
-		int len = buf.length;
-		this.buf = new byte[len];
-		this.buf = buf;
-		this.sequence_Id = TypeConvert.byte2int(buf, 0);
+	public DeliverMessage(byte[] buffer) {
+
+		this.sequence_Id = TypeConvert.byte2int(buffer, 0);
 		this.MsgID_BCD = new byte[10];
-		System.arraycopy(buf, 4, this.MsgID_BCD, 0, this.MsgID_BCD.length);
-		this.MsgID = TypeConvert.getHexString(buf, 4, 0, 10);
-		this.IsReport = buf[14];
-		this.MsgFormat = buf[15];
-		this.RecvTime = TypeConvert.getString(buf, 16, 0, 14);
-		this.SrcTermID = TypeConvert.getString(buf, 30, 0, 21);
-		this.DestTermID = TypeConvert.getString(buf, 51, 0, 21);
-		this.MsgLength = buf[72] & 0xFF;
+		System.arraycopy(buffer, 4, this.MsgID_BCD, 0, this.MsgID_BCD.length);
+		this.MsgID = TypeConvert.getHexString(buffer, 4, 0, 10);
+		this.IsReport = buffer[14];
+		this.MsgFormat = buffer[15];
+		this.RecvTime = TypeConvert.getString(buffer, 16, 0, 14);
+		this.SrcTermID = TypeConvert.getString(buffer, 30, 0, 21);
+		this.DestTermID = TypeConvert.getString(buffer, 51, 0, 21);
+		this.MsgLength = buffer[72] & 0xFF;
 		// System.out.println("len:"+this.MsgLength);
 		this.MsgContent = new byte[this.MsgLength];
-		System.arraycopy(buf, 73, this.MsgContent, 0, this.MsgLength);
+		System.arraycopy(buffer, 73, this.MsgContent, 0, this.MsgLength);
 
 		if (this.IsReport == 1) {
 			byte[] tmpmsgid = new byte[10];
@@ -49,11 +59,11 @@ public class DeliverMessage extends Message {
 		}
 
 		this.Reserve = new byte[8];
-		System.arraycopy(buf, 73 + this.MsgLength, this.Reserve, 0,
+		System.arraycopy(buffer, 73 + this.MsgLength, this.Reserve, 0,
 				this.Reserve.length);
 
-		byte[] tlv = new byte[buf.length - 73 - this.MsgLength - 8];
-		System.arraycopy(buf, this.MsgLength + 73 + 8, tlv, 0, tlv.length);
+		byte[] tlv = new byte[buffer.length - 73 - this.MsgLength - 8];
+		System.arraycopy(buffer, this.MsgLength + 73 + 8, tlv, 0, tlv.length);
 		Vector tmptlv = new Vector();
 
 		//System.out.println("tlv:" + Hex.rhex(tlv));

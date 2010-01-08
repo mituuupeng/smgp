@@ -1,6 +1,5 @@
 package cn.com.zjtelecom.smgp.protocol;
 
-import cn.com.zjtelecom.util.Hex;
 import cn.com.zjtelecom.util.TypeConvert;
 
 public class Tlv {

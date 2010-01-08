@@ -1,11 +1,32 @@
 package cn.com.zjtelecom.smgp.message;
 
+import cn.com.zjtelecom.smgp.bean.Submit;
 import cn.com.zjtelecom.smgp.protocol.RequestId;
 import cn.com.zjtelecom.smgp.protocol.Tlv;
-import cn.com.zjtelecom.util.Hex;
 import cn.com.zjtelecom.util.TypeConvert;
 
 public class SubmitMessage extends Message {
+
+	private Submit submit;
+		
+	public SubmitMessage(byte[] buffer){
+		this.sequence_Id = TypeConvert.byte2int(buffer, 4);
+		this.submit=new Submit();
+		submit.setMsgType(buffer[8]);
+		submit.setNeedReport(buffer[9]);
+		submit.setPriority(buffer[10]);
+		submit.setServiceID(TypeConvert.getString(buffer, 11,0,10));
+		submit.setFeetype(TypeConvert.getString(buffer, 21,0,2));
+		submit.setFeeCode(TypeConvert.getString(buffer, 23,0,6));
+		submit.setFixedFee(TypeConvert.getString(buffer, 29,0,6));
+		submit.setMsgFormat(buffer[35]);
+		submit.setValidTime(TypeConvert.getString(buffer, 36,0,17));
+		submit.setAtTime(TypeConvert.getString(buffer, 53,0,17));
+		submit.setSrcTermid(TypeConvert.getString(buffer, 70,0,21));
+		submit.setChargeTermid(TypeConvert.getString(buffer,91,0,21));
+        //Î´Íê³É´ýÐ´
+		
+	}
 	public SubmitMessage(int msgtype, int needreport, int priority,
 			String serviceid, String feetype, String feecode, String fixedfee,
 			int msgformat, String validtime, String attime, String srctermid,
@@ -13,8 +34,12 @@ public class SubmitMessage extends Message {
 			byte[] msgcontent, byte[] reserve, Tlv[] tlvarray, int SequenceId) {
 		this.sequence_Id=SequenceId;
 		int tlvlength = 0;
+		/*
 		for (int i = 0; i < tlvarray.length; i++) {
 			tlvlength += tlvarray[i].Length + 4;
+		}*/
+		for (int i = 0; i < tlvarray.length; i++) {
+			tlvlength += tlvarray[i].TlvBuf.length;
 		}
 
 		int len = 126 + 21 * desttermid.length + msgcontent.length
@@ -23,7 +48,7 @@ public class SubmitMessage extends Message {
 		// System.out.println("len:"+len);
 		TypeConvert.int2byte(len, buf, 0); // PacketLength
 		TypeConvert.int2byte(RequestId.Submit, buf, 4); // RequestID
-		TypeConvert.int2byte(this.sequence_Id, buf, 8); // RequestID
+		TypeConvert.int2byte(this.sequence_Id, buf, 8); // sequence_Id
 		buf[12] = (byte) msgtype;
 		buf[13] = (byte) needreport;
 		buf[14] = (byte) priority;
@@ -67,4 +92,9 @@ public class SubmitMessage extends Message {
 		//System.out.println();
 
 	}
+	
+    public Submit getSubmit() {
+		return this.submit;
+	}
+
 }

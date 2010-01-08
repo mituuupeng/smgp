@@ -718,15 +718,15 @@ public class PConnectEvent extends Thread {
 	}
 
 	private void checkSubmitResp() {
-		if ((DateUtil.getTimeStamp() - this.LastCheckSubmitTime) < this.CheckSubmitRespInterval)
+		if ((DateUtil.getTimeStampL() - this.LastCheckSubmitTime) < this.CheckSubmitRespInterval)
 			return;
-		this.LastCheckSubmitTime = DateUtil.getTimeStamp();
+		this.LastCheckSubmitTime = DateUtil.getTimeStampL();
 		Iterator iteratorSubmitResp = this.tmpSubmitResp.keySet().iterator();
 		while (iteratorSubmitResp.hasNext()) {
 			int key = (Integer) iteratorSubmitResp.next();
 			SubmitResp submitResp = this.tmpSubmitResp.get(key);
 			// 检查是否超时
-			if ((DateUtil.getTimeStamp() - submitResp.getSendTime()) > this.submitRespTimeOut) {
+			if ((DateUtil.getTimeStampL() - submitResp.getSendTime()) > this.submitRespTimeOut) {
 				this.tmpSubmitResp.remove(key);
 				System.out.println("SubmitResp超时");
 			}
