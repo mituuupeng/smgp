@@ -19,6 +19,9 @@ public class ServerConsole extends Thread {
 					|| command.equalsIgnoreCase("h")) {
 				Help();
 				continue;
+			} else if (command.indexOf("L") == 0 || command.indexOf("l") == 0) {
+				this.serverEventInterface.ListConnected();
+				continue;
 			} else if (command.indexOf("D") == 0 || command.indexOf("d") == 0) {
 				String[] para = command.split(" ");
 				if (para.length < 4) {
@@ -30,6 +33,12 @@ public class ServerConsole extends Thread {
 						System.out.println("SrcNum or DestNum arguments Must be Number!");
 						continue;
 					}
+					if (para.length>3){
+						for (int i=4;i<para.length;i++){
+							para[3]=para[3]+" "+para[i];
+						}
+					}
+					
 					System.out.println("SrcNum:" + para[1]);
 					System.out.println("DestNum:" + para[2]);
 					System.out.println("Content:" + para[3]);
@@ -58,7 +67,9 @@ public class ServerConsole extends Thread {
 	private void Help() {
 		System.out.println("----------------help----------------");
 		System.out.println("Help£ºH[elp]");
-		System.out.println("Deliver£ºD SrcNum DestNum Content");
+		System.out.println("Send Deliver£ºD SrcNum DestNum Content");
+		System.out.println("List Client£ºL[ist]");
+		System.out.println("[] Optional");
 		System.out.println("------------------------------------");
 	}
 
@@ -77,6 +88,7 @@ public class ServerConsole extends Thread {
 		try {
 			BufferedReader lineOfText = new BufferedReader(
 					new InputStreamReader(System.in));
+			
 			com = lineOfText.readLine();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block

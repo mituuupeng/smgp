@@ -10,4 +10,5 @@ public interface ServerEventInterface {
      public SubmitResult onSumit(Submit submit,String account);
      public LoginResult  onLogin(Login login);
      public void SendDeliver(Deliver deliver);
+     public void ListConnected();
 }

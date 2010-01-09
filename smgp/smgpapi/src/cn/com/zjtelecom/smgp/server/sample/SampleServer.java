@@ -2,6 +2,10 @@ package cn.com.zjtelecom.smgp.server.sample;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.Vector;
 
 import cn.com.zjtelecom.smgp.bean.Deliver;
 import cn.com.zjtelecom.smgp.bean.Login;
@@ -9,24 +13,26 @@ import cn.com.zjtelecom.smgp.bean.Submit;
 import cn.com.zjtelecom.smgp.protocol.Tlv;
 import cn.com.zjtelecom.smgp.protocol.TlvId;
 import cn.com.zjtelecom.smgp.server.Server;
+import cn.com.zjtelecom.smgp.server.ServerHandleConnect;
 import cn.com.zjtelecom.smgp.server.inf.ServerEventInterface;
 import cn.com.zjtelecom.smgp.server.result.LoginResult;
 import cn.com.zjtelecom.smgp.server.result.SubmitResult;
 import cn.com.zjtelecom.smgp.server.sample.config.ServerAccountConfFromFile;
 import cn.com.zjtelecom.smgp.server.sample.config.ServerAccountConfig;
 import cn.com.zjtelecom.smgp.server.util.CheckValid;
+import cn.com.zjtelecom.smgp.server.util.ClientStatus;
 import cn.com.zjtelecom.util.Key;
 
 public class SampleServer {
 
 	private static ServerAccountConfig accountconfig;
-	private static String ServerVersion ="3.0";
+	private static String ServerVersion = "3.0";
 
 	private static class server implements ServerEventInterface {
 		private Server serverSimulate;
-        private ServerConsole serverConsole;
-		
-        public server(int port) {
+		private ServerConsole serverConsole;
+
+		public server(int port) {
 			this.serverSimulate = new Server(this, port);
 			this.serverSimulate.start();
 			this.serverConsole = new ServerConsole(this);
@@ -63,8 +69,8 @@ public class SampleServer {
 					accountconfig.getSPNum(login.Account)));
 		}
 
-		public SubmitResult onSumit(Submit submit,String account) {
-			int checkvalue = 0; 
+		public SubmitResult onSumit(Submit submit, String account) {
+			int checkvalue = 0;
 			System.out.println("------------Get Submit------------");
 			System.out.println("MsgType:" + submit.getMsgType());
 			System.out.println("MsgFormat:" + submit.getMsgFormat());
@@ -74,7 +80,7 @@ public class SampleServer {
 			System.out.println("ProductID:" + submit.getProductID());
 			System.out.println("LinkID:" + submit.getLinkID());
 			System.out.println("TP_udhi:" + submit.getTP_udhi());
-				
+
 			try {
 				if (submit.getMsgFormat() == 8) {
 					System.out.println("MsgContent:"
@@ -92,31 +98,72 @@ public class SampleServer {
 				e.printStackTrace();
 
 			}
-			
-			//check SPId valid
-			if (accountconfig.getSPId(account)!=null){
-				int findTlv =0;
-				Tlv [] otherTlv = submit.getOtherTlvArray();
-				for (int i=0;i<otherTlv.length;i++){
-					if (otherTlv[i].Tag == TlvId.MsgSrc){
-						if (otherTlv[i].Value.equals(accountconfig.getSPId(account))){
-							findTlv =1;  
-						}else{
-							checkvalue =8200;
+
+			// check SPId valid
+			if (accountconfig.getSPId(account) != null) {
+				int findTlv = 0;
+				Tlv[] otherTlv = submit.getOtherTlvArray();
+				for (int i = 0; i < otherTlv.length; i++) {
+					if (otherTlv[i].Tag == TlvId.MsgSrc) {
+						if (otherTlv[i].Value.equals(accountconfig
+								.getSPId(account))) {
+							findTlv = 1;
+						} else {
+							checkvalue = 8200;
 						}
 					}
 				}
-				if (findTlv==0) checkvalue =8200;
-				
+				if (findTlv == 0)
+					checkvalue = 8200;
+
 			}
-			
-			//check SrcTermid valid
-			if ((submit.getSrcTermid()).indexOf(accountconfig.getSPNum(account)) !=0)
-				checkvalue=46;
-			//check Other Valid
-			if (checkvalue==0) checkvalue = CheckValid.CheckSubmit(submit);
-			System.out.println("SubmitResult:"+checkvalue);
+
+			// check SrcTermid valid
+			if ((submit.getSrcTermid())
+					.indexOf(accountconfig.getSPNum(account)) != 0)
+				checkvalue = 46;
+			// check Other Valid
+			if (checkvalue == 0)
+				checkvalue = CheckValid.CheckSubmit(submit);
+			System.out.println("SubmitResult:" + checkvalue);
 			return new SubmitResult(checkvalue);
+		}
+
+		public void ListConnected() {
+			HashMap<String, ClientStatus> clientlist = this.serverSimulate
+					.getClientlist();
+
+			Iterator iterator = clientlist.keySet().iterator();
+			int clientnum = 0;
+			while (iterator.hasNext()) {
+				String key = (String) iterator.next();
+				ClientStatus clientStatus = clientlist.get(key);
+				Vector<ServerHandleConnect> connectlist = clientStatus
+						.getServerHandleConnectList();
+				for (int i = 0; i < connectlist.size(); i++) {
+					System.out.println("-----------------------");
+					System.out.println("Client "
+							+ (++clientnum));
+					System.out.println("-----------------------");
+					
+					System.out.println("Account:"
+							+ connectlist.get(i).getAccount());
+					System.out.println("IPAddress:"
+							+ connectlist.get(i).getIpaddress());
+					System.out.println("SPNum:"
+							+ accountconfig.getSPNum(connectlist.get(i)
+									.getAccount()));
+					System.out.println("SPID:"
+							+ accountconfig.getSPId(connectlist.get(i)
+									.getAccount()));
+				}
+
+			}
+			System.out.println("\n\n------------------------------------------");
+			if (clientnum==0) System.out.println("No Client Conneted"); 
+			else System.out.println("Total "+clientnum+" Client Conneted");
+			System.out.println("------------------------------------------");
+
 		}
 
 	}
