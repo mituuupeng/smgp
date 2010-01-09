@@ -25,12 +25,12 @@ public class ServerConsole extends Thread {
 			} else if (command.indexOf("D") == 0 || command.indexOf("d") == 0) {
 				String[] para = command.split(" ");
 				if (para.length < 4) {
-					System.out.println("Error Command");
+					System.out.println("Error:Not enough arguments!");
 					continue;
 				} else {
 					
 					if (checkNum(para[1]) == false || checkNum(para[2]) == false ){
-						System.out.println("SrcNum or DestNum arguments Must be Number!");
+						System.out.println("Error:SrcNum or DestNum arguments must be number!");
 						continue;
 					}
 					if (para.length>3){
@@ -38,10 +38,13 @@ public class ServerConsole extends Thread {
 							para[3]=para[3]+" "+para[i];
 						}
 					}
-					
-					System.out.println("SrcNum:" + para[1]);
-					System.out.println("DestNum:" + para[2]);
-					System.out.println("Content:" + para[3]);
+					System.out.println("--------------------------");
+					System.out.println("Send Deliver  ");
+					System.out.println("--------------------------");					
+					System.out.println("SrcNum  : " + para[1]);
+					System.out.println("DestNum : " + para[2]);
+					System.out.println("Content : " + para[3]);
+					System.out.println("--------------------------");
 					Deliver deliver = new Deliver();
 					deliver.IsReport = 0;
 					deliver.MsgFormat = 15;
@@ -65,11 +68,13 @@ public class ServerConsole extends Thread {
 	}
 
 	private void Help() {
-		System.out.println("----------------help----------------");
-		System.out.println("Help£ºH[elp]");
+		System.out.println("--------------------------");
+		System.out.println("Help  ");
+		System.out.println("--------------------------");
+		System.out.println("Help        £ºH[elp]");
 		System.out.println("Send Deliver£ºD SrcNum DestNum Content");
-		System.out.println("List Client£ºL[ist]");
-		System.out.println("[] Optional");
+		System.out.println("List Client £ºL[ist]");
+		System.out.println("              [] is option");
 		System.out.println("------------------------------------");
 	}
 
