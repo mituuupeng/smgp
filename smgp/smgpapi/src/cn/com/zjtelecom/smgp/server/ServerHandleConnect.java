@@ -52,6 +52,9 @@ public class ServerHandleConnect extends Thread {
 			this.out = new DataOutputStream(this.clientsocket.getOutputStream());
 			do {
 				int PackLen = in.readInt();
+				
+				if (PackLen>2500) exit(); //封包长度不对
+				
 				byte[] Message = new byte[PackLen - 4];
 				in.read(Message);
 
