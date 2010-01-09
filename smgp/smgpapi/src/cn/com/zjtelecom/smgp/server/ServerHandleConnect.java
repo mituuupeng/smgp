@@ -136,17 +136,17 @@ public class ServerHandleConnect extends Thread {
 					}
 				} else {
 					// 非法连接
-					System.out.println("非法连接");
+					System.out.println("Package Error!");
 					exit();
 				}
 
 			} while (true);
 		} catch (SocketException e) {
-			System.out.println("客户端断开连接");
+			System.out.println("Client has close socket connect!");
 			exit();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("其他异常");
+			System.out.println("Other error!");
 			exit();
 		}
 
