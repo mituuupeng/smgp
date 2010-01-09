@@ -2,6 +2,7 @@ package cn.com.zjtelecom.smgp.bean;
 
 import cn.com.zjtelecom.smgp.message.DeliverMessage;
 import cn.com.zjtelecom.smgp.protocol.Tlv;
+import cn.com.zjtelecom.util.DateUtil;
 
 public class Deliver {
 	public String MsgID;
@@ -19,6 +20,8 @@ public class Deliver {
 	public Tlv[] OtherTlv;
 	
 	public Deliver(){
+		this.IsReport =0;
+		this.RecvTime =DateUtil.GetTimeString2();
 		
 	}
 

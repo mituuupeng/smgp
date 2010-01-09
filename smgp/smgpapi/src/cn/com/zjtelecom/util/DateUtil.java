@@ -30,4 +30,8 @@ public class DateUtil {
 		SimpleDateFormat sdf = new SimpleDateFormat("MMddHHmmss");
 		return sdf.format(new Date());
 	}
+	public static String GetTimeString2() {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		return sdf.format(new Date());
+	}
 }
