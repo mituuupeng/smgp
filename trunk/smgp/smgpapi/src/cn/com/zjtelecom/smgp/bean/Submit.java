@@ -30,6 +30,7 @@ public class Submit {
 	private int MsgLength = 0;
 	private byte[] MsgContent = null;
 	private byte[] Reserve = null;
+	private int TP_udhi=0;
 
 	// tlv
 	private String ProductID = "";
@@ -124,6 +125,8 @@ public class Submit {
 	public void AddTlv(int tag, String value) {
 		if (tag == TlvId.LinkID) {
 			this.LinkID = value;
+		} else if (tag == TlvId.TP_udhi) {
+			this.TP_udhi = Integer.parseInt(value);
 		} else if (tag == TlvId.Mserviceid) {
 			this.ProductID = value;
 		} else {
@@ -385,6 +388,14 @@ public class Submit {
 
 	public String[] getDestTermIDArray() {
 		return DestTermIDArray;
+	}
+
+	public void setTP_udhi(int tP_udhi) {
+		TP_udhi = tP_udhi;
+	}
+
+	public int getTP_udhi() {
+		return TP_udhi;
 	}
 	
 }

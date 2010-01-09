@@ -6,15 +6,18 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
+import cn.com.zjtelecom.smgp.bean.Deliver;
 import cn.com.zjtelecom.smgp.bean.Login;
 import cn.com.zjtelecom.smgp.bean.Submit;
 import cn.com.zjtelecom.smgp.message.ActiveTestMessage;
 import cn.com.zjtelecom.smgp.message.ActiveTestRespMessage;
+import cn.com.zjtelecom.smgp.message.DeliverMessage;
 import cn.com.zjtelecom.smgp.message.LoginMessage;
 import cn.com.zjtelecom.smgp.message.LoginRespMessage;
 import cn.com.zjtelecom.smgp.message.Package;
 import cn.com.zjtelecom.smgp.message.SubmitMessage;
 import cn.com.zjtelecom.smgp.message.SubmitRespMessage;
+import cn.com.zjtelecom.smgp.protocol.RequestId;
 import cn.com.zjtelecom.smgp.server.result.LoginResult;
 import cn.com.zjtelecom.smgp.server.result.SubmitResult;
 import cn.com.zjtelecom.util.DateUtil;
@@ -22,7 +25,6 @@ import cn.com.zjtelecom.util.Hex;
 
 public class ServerHandleConnect extends Thread {
 	private Socket clientsocket;
-
 
 	private String ipaddress;
 	private String account;
@@ -36,9 +38,8 @@ public class ServerHandleConnect extends Thread {
 
 	private boolean hasLogin = false;
 
-	public ServerHandleConnect(
-			ServerSimulate server, Socket socket,int timeout) {
-	
+	public ServerHandleConnect(ServerSimulate server, Socket socket, int timeout) {
+
 		this.serversim = server;
 		this.clientsocket = socket;
 		this.TimeOut = timeout;
@@ -46,23 +47,25 @@ public class ServerHandleConnect extends Thread {
 
 	public void run() {
 		try {
-			this.clientsocket.setSoTimeout(this.TimeOut*1000);
+			this.clientsocket.setSoTimeout(this.TimeOut * 1000);
 			this.in = new DataInputStream(this.clientsocket.getInputStream());
 			this.out = new DataOutputStream(this.clientsocket.getOutputStream());
 			do {
 				int PackLen = in.readInt();
 				byte[] Message = new byte[PackLen - 4];
 				in.read(Message);
-				
+
 				this.LastActiveTime = DateUtil.getTimeStampL();
 				// debug
-				System.out.println(Hex.rhex(Message));
+				//System.out.println(Hex.rhex(Message));
 				Package mpackage = new Package(Message);
 
 				// 公用参数
 				int SequenceId = mpackage.SequenceId;
 
-				if (this.hasLogin || mpackage.ReqestId == 0x00000001) {
+				if (this.hasLogin || mpackage.ReqestId == RequestId.ActiveTest
+						|| mpackage.ReqestId == RequestId.ActiveTest_Resp
+						|| mpackage.ReqestId == RequestId.Login) {
 					switch (mpackage.ReqestId) {
 					case (0x00000001):
 						// login
@@ -82,8 +85,8 @@ public class ServerHandleConnect extends Thread {
 								.getAuthenticatorClient();
 						Login login = new Login(loginMessage, this.ipaddress);
 
-						LoginResult loginresult = this.serversim
-								.onLogin(login,this);
+						LoginResult loginresult = this.serversim.onLogin(login,
+								this);
 						LoginRespMessage loginRespMessage = new LoginRespMessage(
 								SequenceId, loginresult.getStatus(),
 								AuthenticatorClient, loginresult.getShareKey(),
@@ -145,25 +148,35 @@ public class ServerHandleConnect extends Thread {
 		}
 
 	}
-	public void SendDeliver(){
-		
-	}
-	public void ActiveTest(){
-		this.checkConnect();
-		ActiveTestMessage activeTestMessage =new ActiveTestMessage();
+
+	public void SendDeliver(Deliver deliver) {
+		DeliverMessage dlm = new DeliverMessage(deliver);
 		try {
-			SendBuf(activeTestMessage.getBuf());
+			SendBuf(dlm.getBuf());
 		} catch (IOException e) {
-			//System.out.println("Active Test Error!");
+			// TODO Auto-generated catch block
 			exit();
 		}
 	}
-	
-	private void checkConnect(){
-		if ((DateUtil.getTimeStampL()-this.LastActiveTime)>this.TimeOut*1000) {
+
+	public void ActiveTest() {
+		this.checkConnect();
+		if (this.hasLogin) {
+			ActiveTestMessage activeTestMessage = new ActiveTestMessage();
+			try {
+				SendBuf(activeTestMessage.getBuf());
+			} catch (IOException e) {
+				// System.out.println("Active Test Error!");
+				exit();
+			}
+		}
+	}
+
+	private void checkConnect() {
+		if ((DateUtil.getTimeStampL() - this.LastActiveTime) > this.TimeOut * 1000) {
 			exit();
 		}
-		
+
 	}
 
 	private void exit() {

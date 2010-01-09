@@ -161,6 +161,7 @@ public class PConnect extends Thread {
 				LoginMessage lm = new LoginMessage(this.ClientID,
 						this.ClientPasswd, this.LoginMode);
 				SendBuf(lm.getBuf());
+				
 				// out.write(lm.getBuf());
 				// System.out.println("ErrorCode:"+result.ErrorCode);
 				// System.out.println("ErrorDescription:"+result.ErrorDescription);
@@ -453,7 +454,8 @@ public class PConnect extends Thread {
 			tmpSubmit.setMsgContent(addContentHeader(splitContent.get(i),
 					splitContent.size(), i + 1));
 			// System.out.println("msglen:"+tmpSubmit.getMsgLength());
-			tmpSubmit.AddTlv(TlvId.TP_udhi, "1");
+			//tmpSubmit.AddTlv(TlvId.TP_udhi, "1");
+			tmpSubmit.setTP_udhi(1);
 			tmpSubmit.AddTlv(TlvId.PkNumber, String.valueOf(i + 1));
 			tmpSubmit
 					.AddTlv(TlvId.PkTotal, String.valueOf(splitContent.size()));
@@ -566,15 +568,15 @@ public class PConnect extends Thread {
 	 * 
 	 * }
 	 */
-
+/*
 	public synchronized Result SendFlashSms(Submit submit) {
 		submit.setMsgContent(addFlashSmsHeader(submit.getMsgContent()));
 		submit.AddTlv(TlvId.TP_udhi, "1");
 		// submit.setMsgFormat(0x18);
 		System.out.println("内容：" + Hex.rhex(submit.getMsgContent()));
 		return this.Send(submit);
-	}
-
+	}*/
+/*
 	private static byte[] addFlashSmsHeader(byte[] content) {
 		// int curlong = content.length;
 		byte[] newcontent = new byte[content.length + 2];
@@ -583,7 +585,7 @@ public class PConnect extends Thread {
 		System.arraycopy(content, 0, newcontent, 2, content.length);
 		return newcontent;
 	}
-
+*/
 	private static byte[] addContentHeader(byte[] content, int total, int num) { // 为了加消息头参数为（原数据,总条数,当前条数）
 		// int curlong = content.length;
 		byte[] newcontent = new byte[content.length + 6];
@@ -596,7 +598,7 @@ public class PConnect extends Thread {
 
 		return newcontent;
 	}
-
+	
 	private static Vector<byte[]> SplitContent(byte[] content) {
 		ByteArrayInputStream buf = new ByteArrayInputStream(content);
 		Vector<byte[]> tmpv = new Vector<byte[]>();
@@ -629,12 +631,16 @@ public class PConnect extends Thread {
 		if (submit.getMsgContent().length > 200) {
 			return (new Result(4, "Message too Long"));
 		}
-		Vector tlv = new Vector();
+		Vector<Tlv> tlv = new Vector<Tlv>();
 		if (this.SPID != null && !this.SPID.equals("")) {
 			tlv.add(new Tlv(TlvId.MsgSrc, this.SPID));
 		}
 		if (submit.getProductID() != null && !submit.getProductID().equals("")) {
 			tlv.add(new Tlv(TlvId.Mserviceid, submit.getProductID()));
+		}
+		
+		if (submit.getTP_udhi()==1){
+			tlv.add(new Tlv(TlvId.TP_udhi,String.valueOf(1)));
 		}
 
 		if (submit.getLinkID() != null && !submit.getLinkID().equals("")) {

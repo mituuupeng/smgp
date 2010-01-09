@@ -484,7 +484,8 @@ public class PConnectEvent extends Thread {
 			tmpSubmit.setMsgContent(addContentHeader(splitContent.get(i),
 					splitContent.size(), i + 1));
 			// System.out.println("msglen:"+tmpSubmit.getMsgLength());
-			tmpSubmit.AddTlv(TlvId.TP_udhi, "1");
+			//tmpSubmit.AddTlv(TlvId.TP_udhi, "1");
+			tmpSubmit.setTP_udhi(1);
 			tmpSubmit.AddTlv(TlvId.PkNumber, String.valueOf(i + 1));
 			tmpSubmit
 					.AddTlv(TlvId.PkTotal, String.valueOf(splitContent.size()));

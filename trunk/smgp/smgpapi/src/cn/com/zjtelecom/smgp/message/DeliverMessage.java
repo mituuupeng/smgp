@@ -6,6 +6,7 @@ import cn.com.zjtelecom.smgp.bean.Deliver;
 import cn.com.zjtelecom.smgp.protocol.RequestId;
 import cn.com.zjtelecom.smgp.protocol.Tlv;
 import cn.com.zjtelecom.smgp.protocol.TlvId;
+import cn.com.zjtelecom.smgp.protocol.TlvUtil;
 import cn.com.zjtelecom.util.Hex;
 import cn.com.zjtelecom.util.TypeConvert;
 
@@ -24,15 +25,72 @@ public class DeliverMessage extends Message {
 	public int TP_udhi;
 	public String ReportMsgID;
 	public Tlv[] OtherTlv;
-	
-	public DeliverMessage (Deliver deliver){
-		//12是header,77是固定长度，还需包含tlv和msgconent
-		int len = 12+77+deliver.MsgLength;
-		buf = new byte[len];
-		// System.out.println("len:"+len);
+
+	public DeliverMessage(Deliver deliver) {
+
+		this.MsgID = deliver.MsgID;
+		this.IsReport = deliver.IsReport;
+		this.MsgFormat = deliver.MsgFormat;
+		this.RecvTime = deliver.RecvTime;
+		this.SrcTermID = deliver.SrcTermID;
+		this.DestTermID = deliver.DestTermID;
+		this.MsgLength = deliver.MsgLength;
+		this.MsgContent = deliver.MsgContent;
+		this.Reserve = deliver.Reserve;
+		this.LinkID = deliver.LinkID;
+		this.TP_udhi = deliver.TP_udhi;
+		this.OtherTlv = deliver.OtherTlv;
+
+		// 12是header,77是固定长度，还需包含tlv和msgconent
+		int len = 12 + 77 + deliver.MsgLength;
+		// get tlv length
+
+		// 处理tlv
+		int tlvlength = 0;
+		Vector<Tlv> tlvV = new Vector<Tlv>();
+		if (this.LinkID != null)
+			tlvV.add(new Tlv(TlvId.LinkID, this.LinkID));
+		if (this.TP_udhi != 0)
+			tlvV.add(new Tlv(TlvId.TP_udhi, String.valueOf(this.TP_udhi)));
+		if (this.OtherTlv != null) {
+			for (int i = 0; i < this.OtherTlv.length; i++) {
+				tlvV.add(this.OtherTlv[i]);
+			}
+		}
+		Tlv[] tlvarray = new Tlv[tlvV.size()];
+		for (int i = 0; i < tlvV.size(); i++) {
+			tlvarray[i] = tlvV.get(i);
+			tlvlength = tlvlength + tlvarray[i].TlvBuf.length;
+		}
+
+		len = len + tlvlength;
+		this.buf = new byte[len];
 		TypeConvert.int2byte(len, buf, 0); // PacketLength
-		TypeConvert.int2byte(RequestId.Submit, buf, 4); // RequestID
-		TypeConvert.int2byte(this.sequence_Id, buf, 8); // sequence_Id
+		TypeConvert.int2byte(RequestId.Deliver, this.buf, 4); // RequestID
+		TypeConvert.int2byte(this.sequence_Id, this.buf, 8); // sequence_Id
+
+		System.arraycopy(Hex.rstr(this.MsgID), 0, this.buf, 12, 10); // msgid
+		this.buf[22] = (byte) this.IsReport; // IsReport
+		this.buf[23] = (byte) this.MsgFormat; // MsgFormat
+		System.arraycopy(this.RecvTime.getBytes(), 0, this.buf, 24,
+				this.RecvTime.length());
+		System.arraycopy(this.SrcTermID.getBytes(), 0, this.buf, 38,
+				this.SrcTermID.length());
+		System.arraycopy(this.DestTermID.getBytes(), 0, this.buf, 59,
+				this.DestTermID.length());
+		this.buf[80] = (byte) this.MsgLength;
+		System.arraycopy(this.MsgContent, 0, this.buf, 81, this.MsgLength);
+		if (this.Reserve != null)
+			System.arraycopy(this.Reserve, 0, this.buf, 81 + this.MsgLength,
+					this.Reserve.length);
+
+		int cur = 81 + this.MsgLength + 8;
+		for (int i = 0; i < tlvarray.length; i++) {
+			System.arraycopy(tlvarray[i].TlvBuf, 0, this.buf, cur,
+					tlvarray[i].TlvBuf.length);
+			cur = cur + tlvarray[i].TlvBuf.length;
+		}
+
 	}
 
 	public DeliverMessage(byte[] buffer) {
@@ -64,41 +122,15 @@ public class DeliverMessage extends Message {
 
 		byte[] tlv = new byte[buffer.length - 73 - this.MsgLength - 8];
 		System.arraycopy(buffer, this.MsgLength + 73 + 8, tlv, 0, tlv.length);
-		Vector tmptlv = new Vector();
+	
+		Tlv[] otherTlv = TlvUtil.TlvAnalysis(tlv);
+		this.OtherTlv = otherTlv;
 
-		//System.out.println("tlv:" + Hex.rhex(tlv));
-		for (int loc = 0; loc < tlv.length;) {
-			int tlv_Tag = TypeConvert.byte2short(tlv, loc + 0);
-			int tlv_Length = TypeConvert.byte2short(tlv, loc + 2);
-			String tlv_Value = "";
-			if (tlv_Tag == TlvId.Mserviceid || tlv_Tag == TlvId.SrcTermPseudo
-					|| tlv_Tag == TlvId.DestTermPseudo
-					|| tlv_Tag == TlvId.ChargeTermPseudo
-					|| tlv_Tag == TlvId.LinkID) {
-				tlv_Value = TypeConvert.getString(tlv, loc + 4, 0, tlv_Length);
-
-				loc = loc + 4 +tlv_Length;
-			} else {
-				tlv_Value = String.valueOf(TypeConvert.byte2tinyint(tlv, loc + 4));
-				loc = tlv_Length + 4 +1;
-			}
-			if (tlv_Tag == TlvId.TP_udhi) {
-				this.TP_udhi=Integer.parseInt(tlv_Value);
-			}
-			else if (tlv_Tag == TlvId.LinkID) {
-				this.LinkID = tlv_Value;
-				// System.out.println("tlv_Tag:"+tlv_Tag);
-				// System.out.println("tlv_Length:"+tlv_Length);
-				// System.out.println("tlv_Value:"+tlv_Value);
-				// System.out.println(Hex.rhex(tlv));
-			} else {
-				tmptlv.add(new Tlv(tlv_Tag, tlv_Value));
-			}
-			if (tmptlv.size() > 0) {
-				this.OtherTlv = new Tlv[tmptlv.size()];
-				for (int i = 0; i < tmptlv.size(); i++) {
-					this.OtherTlv[i] = (Tlv) tmptlv.get(i);
-				}
+		for (int i = 0; i < otherTlv.length; i++) {
+			if (otherTlv[i].Tag == TlvId.LinkID) {
+				this.LinkID = otherTlv[i].Value ;
+			} else if (otherTlv[i].Tag == TlvId.TP_udhi) {
+				this.TP_udhi = Integer.parseInt(otherTlv[i].Value);
 			}
 		}
 		// System.out.println("tlv:" + Hex.rhex(tlv));

@@ -1,5 +1,6 @@
 package cn.com.zjtelecom.smgp.server.result;
 
+import cn.com.zjtelecom.smgp.server.util.GenerateNum;
 import cn.com.zjtelecom.util.DateUtil;
 
 public class SubmitResult {
@@ -26,17 +27,13 @@ public class SubmitResult {
 		this.msgID = msgID;
 	}
 
-	public SubmitResult(int status,int emsnum){
+	public SubmitResult(int status,String msgid){
 		this.Status = status;
-		this.msgID = GenerateMsgID(emsnum);
+		this.msgID = msgid;
 		
 	}
-	private static String GenerateMsgID(int emsnum){
-		return emsnum+DateUtil.GetTimeString() +  getFourNum(); 
+	public SubmitResult(int status) {
+		this.Status = status;
 	}
-	 
-	private static String getFourNum(){
-		String numstr = String.valueOf(DateUtil.getTimeStampL());
-		return numstr.substring(numstr.length()-4);
-	}
+
 }

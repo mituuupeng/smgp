@@ -1,6 +1,5 @@
 package cn.com.zjtelecom.smgp;
 
-import java.io.FileWriter;
 import java.io.IOException;
 
 import cn.com.zjtelecom.smgp.bean.Deliver;
@@ -42,10 +41,10 @@ public class Client {
 		this.pconnect.LogOut();
 	}
 
-    public  Result SendFlashSms(Submit submit){
+   /* public  Result SendFlashSms(Submit submit){
     	return this.pconnect.SendFlashSms(submit);
     }
-    
+    */
     /*public synchronized Result SendWapPush(String disc, String url,String srcTermId,String destTermid,String productID){
     	return this.pconnect.SendWapPush(disc, url, srcTermId, destTermid, productID);
     }
