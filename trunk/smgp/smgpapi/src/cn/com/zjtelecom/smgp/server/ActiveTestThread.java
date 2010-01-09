@@ -7,8 +7,8 @@ import java.util.Vector;
 import cn.com.zjtelecom.smgp.server.util.ClientStatus;
 
 public class ActiveTestThread extends Thread {
-   private ServerSimulate server;
-	public ActiveTestThread(ServerSimulate serversim){
+   private Server server;
+	public ActiveTestThread(Server serversim){
 	   this.server = serversim;
    }
 	public void run(){
