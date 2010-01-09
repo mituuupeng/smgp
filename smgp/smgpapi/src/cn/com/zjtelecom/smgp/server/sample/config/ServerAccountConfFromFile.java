@@ -44,6 +44,9 @@ public class ServerAccountConfFromFile extends ServerAccountConfig{
 					else if (line.indexOf("SPNum=") == 0)
 						this.spnumHash.put(curAccount, line.substring(line
 								.indexOf("=") + 1));
+					else if (line.indexOf("SPId=") == 0)
+						this.spidHash.put(curAccount, line.substring(line
+								.indexOf("=") + 1));
 
 				}
 			} while (true);

@@ -32,13 +32,13 @@ public class ServerHandleConnect extends Thread {
 
 	private DataInputStream in;
 	private DataOutputStream out;
-	private ServerSimulate serversim;
+	private Server serversim;
 	private Long LastActiveTime;
 	private int TimeOut;
 
 	private boolean hasLogin = false;
 
-	public ServerHandleConnect(ServerSimulate server, Socket socket, int timeout) {
+	public ServerHandleConnect(Server server, Socket socket, int timeout) {
 
 		this.serversim = server;
 		this.clientsocket = socket;
@@ -109,7 +109,7 @@ public class ServerHandleConnect extends Thread {
 						SubmitMessage submitMessage = new SubmitMessage(Message);
 						Submit submit = submitMessage.getSubmit();
 						SubmitResult submitResult = this.serversim
-								.onSumit(submit);
+								.onSumit(submit,this.account);
 						SubmitRespMessage submitRespMessage = new SubmitRespMessage(
 								SequenceId, submitResult.getStatus(),
 								submitResult.getMsgID());

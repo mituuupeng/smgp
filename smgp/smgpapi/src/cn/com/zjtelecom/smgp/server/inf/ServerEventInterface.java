@@ -7,7 +7,7 @@ import cn.com.zjtelecom.smgp.server.result.LoginResult;
 import cn.com.zjtelecom.smgp.server.result.SubmitResult;
 
 public interface ServerEventInterface {
-     public SubmitResult onSumit(Submit submit);
+     public SubmitResult onSumit(Submit submit,String account);
      public LoginResult  onLogin(Login login);
      public void SendDeliver(Deliver deliver);
 }

@@ -13,20 +13,21 @@ import cn.com.zjtelecom.smgp.bean.Submit;
 import cn.com.zjtelecom.smgp.server.inf.ServerEventInterface;
 import cn.com.zjtelecom.smgp.server.result.LoginResult;
 import cn.com.zjtelecom.smgp.server.result.SubmitResult;
+import cn.com.zjtelecom.smgp.server.util.CheckValid;
 import cn.com.zjtelecom.smgp.server.util.ClientStatus;
 import cn.com.zjtelecom.smgp.server.util.GenerateNum;
 
-public class ServerSimulate extends Thread {
+public class Server extends Thread {
 	private int serverPort = 8890;
 	private ServerEventInterface serverEventInterface;
 	private ServerSocket server;
 	private int connectCount = 0;
-	private int TimeOut = 60*15; //缺省15秒超时
-	private GenerateNum generateNum=new GenerateNum();
-	
+	private int TimeOut = 60 * 15; // 缺省15秒超时
+	private GenerateNum generateNum = new GenerateNum();
+
 	private HashMap<String, ClientStatus> clientlist = new HashMap<String, ClientStatus>();
-	private HashMap<String,String> spnum2Account=new HashMap<String,String>();
-	
+	private HashMap<String, String> spnum2Account = new HashMap<String, String>();
+
 	public int getTimeOut() {
 		return TimeOut;
 	}
@@ -34,7 +35,6 @@ public class ServerSimulate extends Thread {
 	public void setTimeOut(int timeOut) {
 		TimeOut = timeOut;
 	}
-
 
 	public HashMap<String, ClientStatus> getClientlist() {
 		return clientlist;
@@ -44,8 +44,7 @@ public class ServerSimulate extends Thread {
 		this.clientlist = clientlist;
 	}
 
-
-	public ServerSimulate(ServerEventInterface serverEventInterface, int port) {
+	public Server(ServerEventInterface serverEventInterface, int port) {
 		this.serverEventInterface = serverEventInterface;
 		this.serverPort = port;
 	}
@@ -58,7 +57,7 @@ public class ServerSimulate extends Thread {
 			while (true) {
 				Socket clientsocket = server.accept();
 				ServerHandleConnect serverHandleConnect = new ServerHandleConnect(
-						this, clientsocket,this.TimeOut);
+						this, clientsocket, this.TimeOut);
 				serverHandleConnect.start();
 			}
 		} catch (IOException e) {
@@ -80,38 +79,42 @@ public class ServerSimulate extends Thread {
 		}
 		connectCount++;
 	}
-	
-	public void SendDeliver(Deliver deliver){
-		
+
+	public void SendDeliver(Deliver deliver) {
+
 		deliver.MsgID = this.generateNum.GenerateMsgID();
-		if (deliver.IsReport==0) deliver.LinkID = this.generateNum.GenerateLinkID();
-		System.out.println("addmsgid:"+deliver.MsgID);
-		Iterator iterator	 = this.spnum2Account.keySet().iterator();
-		while(iterator.hasNext()){
+		if (deliver.IsReport == 0)
+			deliver.LinkID = this.generateNum.GenerateLinkID();
+		System.out.println("addmsgid:" + deliver.MsgID);
+		Iterator iterator = this.spnum2Account.keySet().iterator();
+		while (iterator.hasNext()) {
 			String key = (String) iterator.next();
-			System.out.println("key:"+key);
-			System.out.println("DestTermID:"+deliver.DestTermID);
-			
-			
-			if (deliver.DestTermID.indexOf(key)>=0){
-				//System.out.println("Find Client");
-				ClientStatus clientStatus=this.clientlist.get(this.spnum2Account.get(key));
-				if (clientStatus==null) continue;
-				Vector<ServerHandleConnect> clientv = clientStatus.getServerHandleConnectList();
-				ServerHandleConnect tmphanlde = null ;
-				for(int i=0;i<clientv.size();i++){
-					if (tmphanlde == null) tmphanlde = clientv.get(i);
-					
-					if (tmphanlde.getLoginMode()==1){
+			System.out.println("key:" + key);
+			System.out.println("DestTermID:" + deliver.DestTermID);
+
+			if (deliver.DestTermID.indexOf(key) >= 0) {
+				// System.out.println("Find Client");
+				ClientStatus clientStatus = this.clientlist
+						.get(this.spnum2Account.get(key));
+				if (clientStatus == null)
+					continue;
+				Vector<ServerHandleConnect> clientv = clientStatus
+						.getServerHandleConnectList();
+				ServerHandleConnect tmphanlde = null;
+				for (int i = 0; i < clientv.size(); i++) {
+					if (tmphanlde == null)
+						tmphanlde = clientv.get(i);
+
+					if (tmphanlde.getLoginMode() == 1) {
 						tmphanlde.SendDeliver(deliver);
 						break;
-					} else if (tmphanlde.getLoginMode()==2){
+					} else if (tmphanlde.getLoginMode() == 2) {
 						tmphanlde = clientv.get(i);
 					}
 				}
 				tmphanlde.SendDeliver(deliver);
 			} else {
-				System.out.println(deliver.DestTermID+"is not Connected");
+				System.out.println(deliver.DestTermID + "is not Connected");
 			}
 		}
 	}
@@ -141,16 +144,17 @@ public class ServerSimulate extends Thread {
 			ServerHandleConnect serverHandleConnect) {
 		LoginResult loginresult = this.serverEventInterface.onLogin(login);
 		if (loginresult.getStatus() == 0) {
-			this.spnum2Account.put(loginresult.getSpNum(),login.Account + "$" + login.ipaddress);
+			this.spnum2Account.put(loginresult.getSpNum(), login.Account + "$"
+					+ login.ipaddress);
 			this.connected(login.Account, login.ipaddress, serverHandleConnect);
 		}
 
 		return loginresult;
 	}
 
-	public SubmitResult onSumit(Submit submit) {
-		// TODO Auto-generated method stub
-		SubmitResult  submitResult= this.serverEventInterface.onSumit(submit);
+	public SubmitResult onSumit(Submit submit,String account) {
+
+		SubmitResult submitResult = this.serverEventInterface.onSumit(submit,account);
 		submitResult.setMsgID(this.generateNum.GenerateMsgID());
 		return submitResult;
 	}
