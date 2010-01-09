@@ -81,19 +81,20 @@ public class Server extends Thread {
 	}
 
 	public void SendDeliver(Deliver deliver) {
-
+        boolean havefind = false;
 		deliver.MsgID = this.generateNum.GenerateMsgID();
 		if (deliver.IsReport == 0)
 			deliver.LinkID = this.generateNum.GenerateLinkID();
-		System.out.println("addmsgid:" + deliver.MsgID);
+		//System.out.println("addmsgid:" + deliver.MsgID);
 		Iterator iterator = this.spnum2Account.keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = (String) iterator.next();
-			System.out.println("key:" + key);
-			System.out.println("DestTermID:" + deliver.DestTermID);
-
+			//System.out.println("key:" + key+"|");
+			//System.out.println("DestTermID:" + deliver.DestTermID+"|");
+            //System.out.println(deliver.DestTermID.indexOf(key));
 			if (deliver.DestTermID.indexOf(key) >= 0) {
 				// System.out.println("Find Client");
+				havefind =true;
 				ClientStatus clientStatus = this.clientlist
 						.get(this.spnum2Account.get(key));
 				if (clientStatus == null)
@@ -113,9 +114,12 @@ public class Server extends Thread {
 					}
 				}
 				tmphanlde.SendDeliver(deliver);
-			} else {
-				System.out.println(deliver.DestTermID + "is not Connected");
-			}
+			} 
+		}
+		if (havefind == false) {
+			System.out.println(deliver.DestTermID + " is not Connected");
+		} else {
+			System.out.println("Deliver has Sended to Client!");
 		}
 	}
 

@@ -1,8 +1,5 @@
 package cn.com.zjtelecom.smgp.server.result;
 
-import cn.com.zjtelecom.smgp.server.util.GenerateNum;
-import cn.com.zjtelecom.util.DateUtil;
-
 public class SubmitResult {
 	private int sequence_Id;
 	private int Status;

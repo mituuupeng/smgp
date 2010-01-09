@@ -198,4 +198,11 @@ public class ServerHandleConnect extends Thread {
 	public int getLoginMode() {
 		return loginMode;
 	}
+	public String getIpaddress() {
+		return ipaddress;
+	}
+
+	public String getAccount() {
+		return account;
+	}
 }
