@@ -9,6 +9,5 @@ public class ExitMessage extends Message{
         buf = new byte[len];
         TypeConvert.int2byte(len, buf, 0);
         TypeConvert.int2byte(RequestId.Exit, buf, 4);
-
     }
 }

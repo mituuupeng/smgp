@@ -62,6 +62,7 @@ public class PConnectEvent extends Thread {
 	private Socket GwSocket;
 	private DataInputStream in;
 	private DataOutputStream out;
+	private boolean HasConnect=false;
 	/*
 	 * smgp para
 	 */
@@ -74,7 +75,6 @@ public class PConnectEvent extends Thread {
 	 */
 	private int DisplayMode = 1;
 	private int FirstLogin = 0;
-	private int HasConnected = 0;
 	private int HasLogin = 0;
 	private int Logout = 0;
 
@@ -109,7 +109,7 @@ public class PConnectEvent extends Thread {
 		this.SPID = spid;
 		this.DisplayMode = displaymode;
 		this.SequenceId = GetStartSeq();
-		this.Connect();
+		this.HasConnect = this.Connect();
 		// this.Login();
 	}
 
@@ -124,7 +124,7 @@ public class PConnectEvent extends Thread {
 		this.ClientPasswd = clientpasswd;
 		this.SPID = spid;
 		this.SequenceId = GetStartSeq();
-		this.Connect();
+		this.HasConnect = this.Connect();
 		// this.Login();
 	}
 
@@ -143,7 +143,7 @@ public class PConnectEvent extends Thread {
 			this.in = new DataInputStream(this.GwSocket.getInputStream());
 			this.out = new DataOutputStream(this.GwSocket.getOutputStream());
 			this.FirstLogin++;
-			this.HasConnected = 1;
+			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -159,11 +159,12 @@ public class PConnectEvent extends Thread {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				this.Connect();
+				return this.Connect();
 			} else {
-				System.out.println("Can't Connected!");
+				return false;
 			}
 		}
+		
 		return true;
 	}
 

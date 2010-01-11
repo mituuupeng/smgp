@@ -12,6 +12,7 @@ import cn.com.zjtelecom.smgp.bean.Submit;
 import cn.com.zjtelecom.smgp.message.ActiveTestMessage;
 import cn.com.zjtelecom.smgp.message.ActiveTestRespMessage;
 import cn.com.zjtelecom.smgp.message.DeliverMessage;
+import cn.com.zjtelecom.smgp.message.ExitRespMessage;
 import cn.com.zjtelecom.smgp.message.LoginMessage;
 import cn.com.zjtelecom.smgp.message.LoginRespMessage;
 import cn.com.zjtelecom.smgp.message.Package;
@@ -52,15 +53,16 @@ public class ServerHandleConnect extends Thread {
 			this.out = new DataOutputStream(this.clientsocket.getOutputStream());
 			do {
 				int PackLen = in.readInt();
-				
-				if (PackLen>2500) exit(); //封包长度不对
-				
+
+				if (PackLen > 2500)
+					exit(); // 封包长度不对
+
 				byte[] Message = new byte[PackLen - 4];
 				in.read(Message);
 
 				this.LastActiveTime = DateUtil.getTimeStampL();
 				// debug
-				//System.out.println(Hex.rhex(Message));
+				// System.out.println(Hex.rhex(Message));
 				Package mpackage = new Package(Message);
 
 				// 公用参数
@@ -111,8 +113,8 @@ public class ServerHandleConnect extends Thread {
 						// submit
 						SubmitMessage submitMessage = new SubmitMessage(Message);
 						Submit submit = submitMessage.getSubmit();
-						SubmitResult submitResult = this.serversim
-								.onSumit(submit,this.account);
+						SubmitResult submitResult = this.serversim.onSumit(
+								submit, this.account);
 						SubmitRespMessage submitRespMessage = new SubmitRespMessage(
 								SequenceId, submitResult.getStatus(),
 								submitResult.getMsgID());
@@ -126,6 +128,9 @@ public class ServerHandleConnect extends Thread {
 						break;
 					case (0x00000006):
 						// Exit
+						ExitRespMessage exitRespMessage = new ExitRespMessage(
+								SequenceId);
+						SendBuf(exitRespMessage.getBuf());
 						break;
 					case (0x80000003):
 						// Deliver_Resp,不需要返回
@@ -146,7 +151,7 @@ public class ServerHandleConnect extends Thread {
 			exit();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			System.out.println("Other error!");
+			System.out.println("Client Exit !");
 			exit();
 		}
 
@@ -201,6 +206,7 @@ public class ServerHandleConnect extends Thread {
 	public int getLoginMode() {
 		return loginMode;
 	}
+
 	public String getIpaddress() {
 		return ipaddress;
 	}

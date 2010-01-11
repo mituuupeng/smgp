@@ -48,6 +48,7 @@ public class PConnect extends Thread {
 	private Socket GwSocket;
 	private DataInputStream in;
 	private DataOutputStream out;
+	private boolean HasConnect=false;
 	/*
 	 * smgp para
 	 */
@@ -60,7 +61,7 @@ public class PConnect extends Thread {
 	 */
 	private int DisplayMode = 1;
 	private int FirstLogin = 0;
-	private int HasConnected = 0;
+	
 	private int HasLogin = 0;
 	private int Logout = 0;
 
@@ -93,7 +94,7 @@ public class PConnect extends Thread {
 		this.SPID = spid;
 		this.DisplayMode = displaymode;
 		this.SequenceId = GetStartSeq();
-		this.Connect();
+		this.HasConnect = this.Connect();
 		// this.Login();
 	}
 
@@ -106,7 +107,7 @@ public class PConnect extends Thread {
 		this.ClientPasswd = clientpasswd;
 		this.SPID = spid;
 		this.SequenceId = GetStartSeq();
-		this.Connect();
+		this.HasConnect = this.Connect();
 		// this.Login();
 	}
 
@@ -121,11 +122,16 @@ public class PConnect extends Thread {
 	private boolean Connect() {
 		try {
 			this.GwSocket = new Socket(this.Host, this.Port);
+			
+			//if (this.GwSocket==null){System.out.println("can not create socket!");}
+		
 			this.GwSocket.setSoTimeout(60000);
+			//if (this.out==null){System.out.println("can not create socket!");}
+			
 			this.in = new DataInputStream(this.GwSocket.getInputStream());
 			this.out = new DataOutputStream(this.GwSocket.getOutputStream());
 			this.FirstLogin++;
-			this.HasConnected = 1;
+			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -141,11 +147,13 @@ public class PConnect extends Thread {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				this.Connect();
+				return this.Connect();
 			} else {
-				System.out.println("Can't Connected!");
+				//System.out.println("Can't Connected!");
+				return false;
 			}
 		}
+		
 		return true;
 	}
 
@@ -399,7 +407,9 @@ public class PConnect extends Thread {
 	}
 
 	public synchronized Result Login() {
-
+       if (this.HasConnect == false) {
+    	   return new Result(-2,"Can not creat socket!");
+       }
 		Result result = new Result();
 		try {
 			LoginMessage lm = new LoginMessage(this.ClientID,
@@ -834,6 +844,7 @@ public class PConnect extends Thread {
 	}
 
 	private synchronized void SendBuf(byte[] buf) throws IOException {
+		
 		this.out.write(buf);
 		if (this.LogFile != null) {
 			this.LogFile.write("[" + GetTime() + "]" + "Send:" + Hex.rhex(buf)
