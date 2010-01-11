@@ -19,6 +19,9 @@ public class ServerConsole extends Thread {
 					|| command.equalsIgnoreCase("h")) {
 				Help();
 				continue;
+			} else if (command.equalsIgnoreCase("exit")){
+				this.serverEventInterface.Exit();
+				continue;
 			} else if (command.indexOf("L") == 0 || command.indexOf("l") == 0) {
 				this.serverEventInterface.ListConnected();
 				continue;
@@ -74,6 +77,7 @@ public class ServerConsole extends Thread {
 		System.out.println("Help        £ºH[elp]");
 		System.out.println("Send Deliver£ºD SrcNum DestNum Content");
 		System.out.println("List Client £ºL[ist]");
+		System.out.println("Close Server£ºExit");
 		System.out.println("              [] is option");
 		System.out.println("------------------------------------");
 	}

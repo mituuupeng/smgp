@@ -105,8 +105,8 @@ public class Display {
 				System.out.println("MsgContent      : "
 						+ new String(submit.getMsgContent()));
 			}
-			System.out.println("LinkID          : " + submit.getLinkID());
-			System.out.println("ProductID       : " + submit.getProductID());
+			if (!submit.getLinkID().equals("")) System.out.println("LinkID          : " + submit.getLinkID());
+			if (!submit.getProductID().equals("")) System.out.println("MServiceid      : " + submit.getProductID());
 			if (submit.getOtherTlvArray()!=null){
 				Tlv[] tlvarray=submit.getOtherTlvArray();
 				for (int i=0;i<tlvarray.length;i++){
@@ -128,7 +128,7 @@ public class Display {
 					case 0x000F:System.out.println("NodesCount      : "+tlvarray[i].Value);break;
 					case 0x0010:System.out.println("MsgSrc          : "+tlvarray[i].Value);break;
 					case 0x0011:System.out.println("SrcType         : "+tlvarray[i].Value);break;
-					case 0x0012:System.out.println("Mserviceid      : "+tlvarray[i].Value);break;
+					//case 0x0012:System.out.println("MServiceid      : "+tlvarray[i].Value);break;
 					}
 				}
 			}

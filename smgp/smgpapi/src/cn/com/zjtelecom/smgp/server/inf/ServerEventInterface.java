@@ -11,4 +11,5 @@ public interface ServerEventInterface {
      public LoginResult  onLogin(Login login);
      public void SendDeliver(Deliver deliver);
      public void ListConnected();
+     public void Exit();
 }

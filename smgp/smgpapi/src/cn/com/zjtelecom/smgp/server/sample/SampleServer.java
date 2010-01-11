@@ -95,6 +95,13 @@ public class SampleServer {
 
 		}
 
+		public void Exit() {
+			this.serverSimulate.stop();
+			this.serverConsole.stop();
+			
+			
+		}
+
 	}
 
 	public static void main(String[] args) {
