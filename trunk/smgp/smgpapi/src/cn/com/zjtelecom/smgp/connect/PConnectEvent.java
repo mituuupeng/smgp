@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -22,6 +23,7 @@ import cn.com.zjtelecom.smgp.bean.Submit;
 import cn.com.zjtelecom.smgp.bean.SubmitBatch;
 import cn.com.zjtelecom.smgp.bean.SubmitResp;
 import cn.com.zjtelecom.smgp.inf.ClientEventInterface;
+import cn.com.zjtelecom.smgp.message.ActiveTestMessage;
 import cn.com.zjtelecom.smgp.message.ActiveTestRespMessage;
 import cn.com.zjtelecom.smgp.message.DeliverMessage;
 import cn.com.zjtelecom.smgp.message.DeliverRespMessage;
@@ -283,7 +285,8 @@ public class PConnectEvent extends Thread {
 					}
 				}
 				// if (CheckLongSmsOverTime(this.LongSmsOverTime)) notify();
-
+			} catch (SocketTimeoutException e) {
+				SendActive();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				// e.printStackTrace();
@@ -401,6 +404,7 @@ public class PConnectEvent extends Thread {
 				this.LogFile.close();
 			}
 			this.stop();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -753,6 +757,17 @@ public class PConnectEvent extends Thread {
 
 		return null;
 	}
+	
+	private void SendActive(){
+		ActiveTestMessage activeTestMessage =new ActiveTestMessage();
+		try {
+			SendBuf(activeTestMessage.getBuf());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 
 	private static String GetTime() {
 		String TimeStamp = "";

@@ -52,8 +52,10 @@ public class Server extends Thread {
 	public void run() {
 		try {
 			server = new ServerSocket(this.serverPort);
+			
 			ActiveTestThread activeTestThread = new ActiveTestThread(this);
 			activeTestThread.start();
+			
 			while (true) {
 				Socket clientsocket = server.accept();
 				ServerHandleConnect serverHandleConnect = new ServerHandleConnect(
