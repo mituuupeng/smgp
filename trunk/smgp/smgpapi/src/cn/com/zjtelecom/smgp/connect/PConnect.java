@@ -5,8 +5,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -20,6 +20,7 @@ import cn.com.zjtelecom.smgp.bean.LongDeliver;
 import cn.com.zjtelecom.smgp.bean.Result;
 import cn.com.zjtelecom.smgp.bean.Submit;
 import cn.com.zjtelecom.smgp.bean.SubmitBatch;
+import cn.com.zjtelecom.smgp.message.ActiveTestMessage;
 import cn.com.zjtelecom.smgp.message.ActiveTestRespMessage;
 import cn.com.zjtelecom.smgp.message.DeliverMessage;
 import cn.com.zjtelecom.smgp.message.DeliverRespMessage;
@@ -77,6 +78,15 @@ public class PConnect extends Thread {
 	private Vector<Package> undoPack = new Vector<Package>();
 	private Vector deliverbuffer = new Vector();
 	private int SequenceId = 0;
+	private int SockTimeOut=60000;
+
+	public int getSockTimeOut() {
+		return SockTimeOut;
+	}
+
+	public void setSockTimeOut(int sockTimeOut) {
+		SockTimeOut = sockTimeOut;
+	}
 
 	/*
 	 * 临时存放长短信
@@ -125,7 +135,7 @@ public class PConnect extends Thread {
 			
 			//if (this.GwSocket==null){System.out.println("can not create socket!");}
 		
-			this.GwSocket.setSoTimeout(60000);
+			this.GwSocket.setSoTimeout(this.SockTimeOut);
 			//if (this.out==null){System.out.println("can not create socket!");}
 			
 			this.in = new DataInputStream(this.GwSocket.getInputStream());
@@ -267,7 +277,8 @@ public class PConnect extends Thread {
 					}
 				}
 				// if (CheckLongSmsOverTime(this.LongSmsOverTime)) notify();
-
+			} catch (SocketTimeoutException e) {
+				SendActive();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				// e.printStackTrace();
@@ -285,6 +296,16 @@ public class PConnect extends Thread {
 
 	public void setLSmsOverTime(int second) {
 		this.LongSmsOverTime = second;
+	}
+	
+	private void SendActive(){
+		ActiveTestMessage activeTestMessage =new ActiveTestMessage();
+		try {
+			SendBuf(activeTestMessage.getBuf());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void AddLongSms(DeliverMessage dm) {
