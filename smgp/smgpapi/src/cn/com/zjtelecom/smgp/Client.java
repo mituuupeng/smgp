@@ -109,5 +109,7 @@ public class Client {
 			return null;
 		}
 	}
+	
+	//public set
 
 }
