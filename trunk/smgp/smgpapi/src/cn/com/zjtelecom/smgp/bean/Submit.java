@@ -1,5 +1,7 @@
 package cn.com.zjtelecom.smgp.bean;
 
+import java.io.UnsupportedEncodingException;
+
 import cn.com.zjtelecom.smgp.protocol.Tlv;
 import cn.com.zjtelecom.smgp.protocol.TlvId;
 
@@ -305,6 +307,29 @@ public class Submit {
 		MsgContent = msgContent;
 		this.MsgLength=msgContent.length;
 	}
+	
+	public void setMsgContent(String msgcontent,int msgformat) {
+		if (msgformat==15){
+			try {
+				this.MsgContent = msgcontent.getBytes("GBK");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (msgformat==8){
+			try {
+				this.MsgContent = msgcontent.getBytes("iso-10646-ucs-2");
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			this.MsgContent = msgcontent.getBytes();
+		}
+	    this.MsgFormat =msgformat;
+		this.MsgLength=this.MsgContent.length;
+	}
+
 
 	public byte[] getReserve() {
 		return Reserve;
